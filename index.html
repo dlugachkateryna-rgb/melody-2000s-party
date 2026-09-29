@@ -251,36 +251,31 @@ button{font-family:inherit}
 .bub-head{display:flex; justify-content:space-between; align-items:baseline; gap:6px 14px; flex-wrap:wrap; max-width:900px; margin:6px auto 10px}
 .bub-head .q{font-size:16px; color:#e6dcff}
 .bub-head .kn{font:700 18px/1 var(--lcd); color:#9be83a; text-shadow:0 0 10px rgba(155,232,58,.6)}
-.bubbles{display:flex; flex-wrap:wrap; justify-content:center; gap:18px 16px; max-width:900px; margin:0 auto; padding:10px 0 6px}
-.bub{--s:112px; position:relative; width:var(--s); height:var(--s); flex:none; border-radius:50%; padding:12px; cursor:pointer; display:grid; place-items:center; text-align:center;
-  color:#fff; font:800 17px/1.1 var(--ui); text-shadow:0 1px 3px rgba(0,0,0,.6); overflow-wrap:anywhere; overflow:hidden;
-  border:1.5px solid rgba(255,255,255,.6);
-  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.95) 0 6%,rgba(255,255,255,.22) 15%,transparent 30%),
-    radial-gradient(circle at 50% 110%,rgba(73,214,255,.45),transparent 55%),
-    linear-gradient(160deg,rgba(170,150,255,.45),rgba(60,40,170,.6));
-  box-shadow:inset 0 -10px 20px rgba(20,10,80,.45), 0 10px 24px rgba(0,0,0,.35), 0 0 18px rgba(138,92,255,.35);
-  backdrop-filter:blur(4px);
+.bubbles{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; max-width:1000px; margin:0 auto; padding:10px 0 6px}
+.bub{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px; min-width:150px; max-width:100%; min-height:62px; padding:10px 26px 10px 16px; border-radius:999px; cursor:pointer;
+  color:#fff; font:800 21px/1.15 var(--ui); letter-spacing:.2px; text-shadow:0 1px 2px rgba(0,0,0,.5);
+  border:2px solid rgba(255,255,255,.75);
+  background:linear-gradient(180deg,rgba(255,255,255,.32) 0%,rgba(255,255,255,.08) 48%,rgba(255,255,255,0) 52%), linear-gradient(180deg,#8a67ff,#5a2fe0 55%,#4318b8);
+  box-shadow:inset 0 -6px 14px rgba(20,5,80,.45), 0 8px 20px rgba(0,0,0,.35), 0 0 18px rgba(138,92,255,.4);
   animation:bfloat var(--fd,3.6s) ease-in-out var(--fdl,0s) infinite; transition:scale .18s, box-shadow .25s, border-color .25s}
-.bub.long{font-size:14.5px; padding:8px}
-.bub.xlong{font-size:12.5px; padding:6px}
-.bub:hover{scale:1.07}
+.bub .nm{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.bub .ic{flex:none; width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.92); box-shadow:0 2px 6px rgba(0,0,0,.3); text-shadow:none; font:900 17px/1 var(--ui); color:#2f6a08}
+.bub .ic .buddy{width:22px; height:22px}
+.bub:hover{scale:1.05}
 .bub:active{scale:.95}
-.bub.on{border-color:#eaffc9;
-  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.95) 0 6%,rgba(255,255,255,.3) 15%,transparent 30%),
-    linear-gradient(160deg,#caff8f,#72c928 55%,#3a8008);
-  box-shadow:inset 0 -10px 18px rgba(20,60,0,.4), 0 10px 24px rgba(0,0,0,.35), 0 0 30px rgba(155,232,58,.75)}
-.bub.on::after{content:"✓"; position:absolute; top:10%; right:12%; width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font:900 15px/1 var(--ui); color:#2f6a08; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.3)}
-.bub.fire{border-color:#fff2c4; font-size:13px; letter-spacing:.5px;
-  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.95) 0 6%,rgba(255,255,255,.28) 15%,transparent 30%),
-    linear-gradient(160deg,#ffe38a,#ffab3d 50%,#e8641c);
+.bub.on{color:#0f2e05; text-shadow:0 1px 0 rgba(255,255,255,.55); border-color:#f0ffd9;
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.15) 48%,rgba(255,255,255,0) 52%), linear-gradient(180deg,#d4ff9e,#8ee04a 55%,#5fb41f);
+  box-shadow:inset 0 -6px 14px rgba(30,80,0,.3), 0 8px 20px rgba(0,0,0,.35), 0 0 28px rgba(155,232,58,.75)}
+.bub.fire{color:#3d1400; text-shadow:0 1px 0 rgba(255,255,255,.5); border-color:#fff3cc; font-size:19px; letter-spacing:.5px; padding-left:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.15) 48%,rgba(255,255,255,0) 52%), linear-gradient(180deg,#ffe28a,#ffae42 55%,#f07a22);
   animation:bfloat var(--fd,3.6s) ease-in-out var(--fdl,0s) infinite, flame 1.3s ease-in-out infinite}
-.bub.fire .fl{display:block; font-size:38px; line-height:1; margin-bottom:2px; text-shadow:none}
-.bub.fire.all{box-shadow:inset 0 -10px 18px rgba(120,40,0,.35), 0 0 44px rgba(255,171,61,.95)}
+.bub.fire .fl{font-size:26px; line-height:1; text-shadow:none}
+.bub.fire.all{box-shadow:inset 0 -6px 14px rgba(120,40,0,.3), 0 0 44px rgba(255,171,61,.95)}
 .bub.pop{animation:bfloat var(--fd,3.6s) ease-in-out var(--fdl,0s) infinite, bpop .45s ease-out}
 .bub.fire.pop{animation:bfloat var(--fd,3.6s) ease-in-out var(--fdl,0s) infinite, flame 1.3s ease-in-out infinite, bpop .45s ease-out}
 @keyframes bfloat{0%,100%{translate:0 0} 50%{translate:0 -8px}}
 @keyframes bpop{0%{scale:.7} 60%{scale:1.14} 100%{scale:1}}
-@keyframes flame{0%,100%{box-shadow:inset 0 -10px 18px rgba(120,40,0,.35), 0 0 20px rgba(255,171,61,.55)} 50%{box-shadow:inset 0 -10px 18px rgba(120,40,0,.35), 0 0 38px rgba(255,171,61,.9)}}
+@keyframes flame{0%,100%{box-shadow:inset 0 -6px 14px rgba(120,40,0,.3), 0 0 18px rgba(255,171,61,.55)} 50%{box-shadow:inset 0 -6px 14px rgba(120,40,0,.3), 0 0 38px rgba(255,171,61,.9)}}
 
 /* ---------- overlays ---------- */
 .ovl{position:fixed; inset:0; z-index:40; display:grid; place-items:center; padding:16px; background:rgba(7,4,26,.78); backdrop-filter:blur(3px); animation:fin .25s ease-out}
@@ -381,8 +376,9 @@ button{font-family:inherit}
   .amp-ctrls{gap:10px}
   .rb{width:48px; height:48px}
   .rb.play{width:66px; height:66px}
-  .bub{--s:88px; font-size:15px; padding:8px} .bub.long{font-size:12px; padding:6px} .bub.xlong{font-size:10.5px; padding:5px} .bub.fire .fl{font-size:30px}
-  .bubbles{gap:12px 10px}
+  .bub{min-width:0; min-height:50px; padding:7px 16px 7px 9px; font-size:17px; gap:8px} .bub .ic{width:26px; height:26px; font-size:15px} .bub .ic .buddy{width:19px; height:19px}
+  .bub.fire{font-size:15px; padding-left:12px} .bub.fire .fl{font-size:21px}
+  .bubbles{gap:10px}
   .bub-head .q{font-size:13px}
   .lcd-meta span:nth-child(n+2){display:none}
   .chip{font-size:15px; padding:8px 12px 8px 8px}
@@ -759,17 +755,23 @@ VIEWS.setup = {
       <div class="win"><div class="win-t"><span class="ttl">🎵 Пісні (${S.songs.length})</span>${wb()}</div>
         <div class="win-b">
           <label class="drop ${busyAdding ? 'busy' : ''}" id="drop">
-            <input id="fileIn" type="file" accept="audio/*,video/*,.mp3,.m4a,.wav,.ogg,.aac,.flac,.mp4,.m4v,.mov,.webm,.mkv" multiple hidden>
+            <input id="fileIn" type="file" accept="audio/*,video/*,.mp3,.m4a,.wav,.ogg,.aac,.flac,.mp4,.m4v,.mov,.webm,.mkv,.party" multiple hidden>
             <div class="drop-ic">💿</div>
             <div><b>Перетягни сюди аудіо (mp3, m4a, wav) або відео (mp4, mov)</b><br><span>або натисни, щоб вибрати файли. З відео гра сама витягне звук.</span></div>
           </label>
           ${setupMsg ? `<div class="note ${setupMsg.warn ? 'warn' : ''} ${setupMsg.live ? 'live' : ''}" id="addStatus">${esc(setupMsg.text)}</div>` : ''}
           <div class="note">🔒 Назви файлів видно тільки тут. У грі буде просто <b>Song 1, Song 2...</b></div>
           <div class="note">🔀 На початку кожної гри пісні перемішуються у випадковому порядку.</div>
-          <div class="note">💾 Пісні зберігаються в цьому браузері і не зникають після перезавантаження. На іншому компʼютері їх треба додати знову.</div>
+          <div class="note">💾 Пісні, гравці і налаштування зберігаються в цьому браузері і не зникають після перезавантаження.</div>
+          <div class="note">💻 Щоб грати на іншому компʼютері: натисни «Зберегти все у файл», перенеси файл (флешка, Google Drive, Telegram) і відкрий його там кнопкою «Відкрити файл гри».</div>
           ${Store.persistent ? '' : `<div class="note warn">⚠ Цей браузер не зберігає файли. Якщо сторінка перезавантажиться, пісні треба буде додати знову. Краще відкрити в Chrome.</div>`}
           <ol class="songs" id="songs">${songRows()}</ol>
-          ${S.songs.length ? `<div class="row gap"><button class="btn sm silver" data-act="clearSongs">🗑 Видалити всі</button></div>` : ''}
+          <input id="packIn" type="file" accept=".party" hidden>
+          <div class="row gap">
+            ${S.songs.length ? `<button class="btn sm" data-act="exportPack">💾 Зберегти все у файл</button>` : ''}
+            <button class="btn sm silver" data-act="importPick">📂 Відкрити файл гри</button>
+            ${S.songs.length ? `<button class="btn sm silver" data-act="clearSongs">🗑 Видалити всі</button>` : ''}
+          </div>
         </div></div>
 
       <div class="win"><div class="win-t"><span class="ttl">⚙ Налаштування гри</span>${wb()}</div>
@@ -793,6 +795,8 @@ VIEWS.setup = {
     $('#showAnswer').addEventListener('change', e => { S.settings.showAnswer = e.target.checked; save(); });
     const fi = $('#fileIn');
     fi.addEventListener('change', () => { addFiles(fi.files); fi.value = ''; });
+    const pi = $('#packIn');
+    pi.addEventListener('change', () => { if (pi.files[0]) importPack(pi.files[0]); pi.value = ''; });
     const d = $('#drop');
     ['dragenter', 'dragover'].forEach(t => d.addEventListener(t, () => d.classList.add('over')));
     ['dragleave', 'drop'].forEach(t => d.addEventListener(t, () => d.classList.remove('over')));
@@ -815,9 +819,59 @@ function probeDuration(blob) {
     a.src = u;
   });
 }
+/* ---------- перенесення на інший компʼютер: один файл .party ---------- */
+const PACK_MAGIC = 'T2K1', PACK_NAME = 'ty-z-2000-x.party';
+async function buildPack() {
+  const metas = [], parts = [];
+  for (const s of S.songs) {
+    const b = await Store.get('song:' + s.id); if (!b) continue;
+    metas.push({ file: s.file, title: s.title, dur: s.dur, start: s.start || 0, fromVideo: !!s.fromVideo, type: b.type || 'audio/mpeg', size: b.size });
+    parts.push(b);
+  }
+  const head = new TextEncoder().encode(JSON.stringify({ app: 'ty-z-2000-x', v: 1, settings: S.settings, players: S.players.map(p => p.name), songs: metas }));
+  const len = new Uint8Array(4); new DataView(len.buffer).setUint32(0, head.length, true);
+  return new Blob([new TextEncoder().encode(PACK_MAGIC), len, head, ...parts], { type: 'application/octet-stream' });
+}
+async function readPack(file) {
+  if (new TextDecoder().decode(await file.slice(0, 4).arrayBuffer()) !== PACK_MAGIC) throw new Error('not a pack');
+  const len = new DataView(await file.slice(4, 8).arrayBuffer()).getUint32(0, true);
+  const head = JSON.parse(new TextDecoder().decode(await file.slice(8, 8 + len).arrayBuffer()));
+  let off = 8 + len;
+  const songs = head.songs.map(m => { const blob = file.slice(off, off + m.size, m.type); off += m.size; return { ...m, blob }; });
+  return { head, songs };
+}
+async function importPack(file) {
+  if (busyAdding) return;
+  busyAdding = true; setupMsg = { text: '📂 Відкриваю файл гри...', live: true }; if (S.screen === 'setup') render();
+  try {
+    const { head, songs } = await readPack(file);
+    let added = 0, skipped = 0;
+    for (const m of songs) {
+      if (S.songs.some(s => s.file === m.file && Math.abs(s.dur - m.dur) < 0.5)) { skipped++; continue; }
+      const id = uid();
+      await Store.put('song:' + id, new Blob([await m.blob.arrayBuffer()], { type: m.type }));
+      S.songs.push({ id, file: m.file, title: m.title, dur: m.dur, start: m.start || 0, fromVideo: !!m.fromVideo });
+      added++; save();
+      const el = $('#addStatus'); if (el) el.textContent = `📂 Додаю пісні з файлу: ${added + skipped} з ${songs.length}`;
+    }
+    (head.players || []).forEach(n => { if (!S.players.some(p => p.name === n)) S.players.push({ id: uid(), name: n }); });
+    if (head.settings) Object.assign(S.settings, { bday: head.settings.bday || S.settings.bday, clipSec: head.settings.clipSec ?? S.settings.clipSec, showAnswer: !!head.settings.showAnswer });
+    save();
+    setupMsg = { text: `✓ З файлу додано пісень: ${added}${skipped ? ` (ще ${skipped} вже були)` : ''}. Гравців: ${S.players.length}.` };
+  } catch (e) {
+    console.warn(e);
+    setupMsg = { text: 'Це не файл гри 🤔 Потрібен файл .party, збережений кнопкою «Зберегти все у файл».', warn: true };
+  }
+  busyAdding = false;
+  if (S.screen === 'setup') render();
+}
+
 async function addFiles(files) {
   if (busyAdding) return;
+  const packs = [...files].filter(f => /\.party$/i.test(f.name));
+  for (const p of packs) await importPack(p);
   const list = [...files].filter(f => fileKind(f));
+  if (!list.length && packs.length) return;
   if (!list.length) { setupMsg = { text: 'Це не схоже на аудіо чи відео 🤔 Потрібні mp3 / m4a / wav або mp4 / mov.', warn: true }; render(); return; }
   busyAdding = true;
   const total = list.length, bad = [], prog = new Map(); let done = 0, added = 0;
@@ -899,10 +953,10 @@ function bubblesHtml(r) {
   const n = ps.filter(p => knew.has(p.id)).length, allIn = ps.length > 0 && n === ps.length;
   const fl = i => `--fd:${(3.2 + (i * 0.37) % 1.4).toFixed(2)}s;--fdl:${(-(i * 0.53) % 3).toFixed(2)}s`;
   return `
-    <div class="bub-head"><span class="px q">Хто знає цю пісню? Тапни по бульбашці ✦</span><span class="kn">ЗНАЮТЬ: ${n} / ${ps.length}</span></div>
+    <div class="bub-head"><span class="px q">Хто знає цю пісню? Тапни по імені ✦</span><span class="kn">ЗНАЮТЬ: ${n} / ${ps.length}</span></div>
     <div class="bubbles">
-      ${ps.length ? `<button class="bub fire ${allIn ? 'all' : ''}" data-act="allKnow" style="${fl(0)}"><span><span class="fl">🔥</span>${allIn ? 'СКИНУТИ' : 'ВСІ ЗНАЮТЬ'}</span></button>` : ''}
-      ${ps.map((p, i) => `<button class="bub ${knew.has(p.id) ? 'on' : ''} ${p.name.length >= 11 ? 'xlong' : p.name.length >= 8 ? 'long' : ''}" data-act="toggle" data-pid="${p.id}" style="${fl(i + 1)}"><span>${esc(p.name)}</span></button>`).join('')}
+      ${ps.length ? `<button class="bub fire ${allIn ? 'all' : ''}" data-act="allKnow" style="${fl(0)}"><span class="fl">🔥</span><span class="nm">${allIn ? 'СКИНУТИ' : 'ВСІ ЗНАЮТЬ'}</span></button>` : ''}
+      ${ps.map((p, i) => { const on = knew.has(p.id); return `<button class="bub ${on ? 'on' : ''}" data-act="toggle" data-pid="${p.id}" style="${fl(i + 1)}"><span class="ic">${on ? '✓' : buddy(false)}</span><span class="nm">${esc(p.name)}</span></button>`; }).join('')}
     </div>`;
 }
 function ampHtml(i) {
@@ -1168,6 +1222,16 @@ const ACTS = {
     for (const s of S.songs) await Store.del('song:' + s.id);
     S.songs = []; save(); setupMsg = null; render();
   },
+
+  async exportPack() {
+    setupMsg = { text: '💾 Готую файл...', live: true }; render();
+    const blob = await buildPack();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = PACK_NAME;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    setupMsg = { text: `✓ Збережено файл «${PACK_NAME}» (${(blob.size / 1048576).toFixed(1)} МБ) у Завантаження. Перенеси його на інший компʼютер і відкрий там кнопкою «📂 Відкрити файл гри».` };
+    render();
+  },
+  importPick() { const pi = $('#packIn'); if (pi) pi.click(); },
 
   delPlayer(b) { S.players = S.players.filter(p => p.id !== b.dataset.pid); save(); render(); },
   async startGame() {
