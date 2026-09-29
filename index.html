@@ -38,9 +38,10 @@ button{font-family:inherit}
 #stars i{position:absolute; border-radius:50%; background:#fff; box-shadow:0 0 6px #b596ff; animation:tw 3s ease-in-out infinite}
 #stars b{position:absolute; color:#d9ccff; font-size:14px; font-weight:400; text-shadow:0 0 8px #8a5cff; animation:tw 3s ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:.2; transform:scale(.7)} 50%{opacity:1; transform:scale(1.15)}}
-#orbs i{position:absolute; bottom:-160px; border-radius:50%; opacity:.7; border:1px solid rgba(255,255,255,.28);
+#orbs i{position:absolute; bottom:-160px; border-radius:50%; opacity:.7;
   background:radial-gradient(circle at 33% 28%, rgba(255,255,255,.9) 0 4%, rgba(255,255,255,.25) 9%, transparent 18%),
-    radial-gradient(closest-side, rgba(var(--c),.05) 0 55%, rgba(var(--c),.2) 80%, rgba(var(--c),.45) 94%, rgba(255,255,255,.5) 99%, transparent 100%);
+    radial-gradient(closest-side, rgba(var(--c),.05) 0 55%, rgba(var(--c),.2) 80%, rgba(var(--c),.42) 97%, rgba(var(--c),.3) 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.38), inset 0 0 10px rgba(255,255,255,.14);
   animation:rise var(--d) linear infinite; animation-delay:var(--dl)}
 #orbs i.popped{visibility:hidden}
 .orb-pop{position:fixed; z-index:1; pointer-events:none; border-radius:50%; border:2px solid rgba(255,255,255,.85); box-shadow:0 0 18px rgba(181,150,255,.8), inset 0 0 12px rgba(255,255,255,.45); transform:translate(-50%,-50%); animation:orbpop .32s ease-out forwards}
@@ -136,8 +137,7 @@ button{font-family:inherit}
 .hero-btns{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px}
 .stats{margin-top:16px; color:#bfb3ff; font-size:14px}
 .desk{display:flex; justify-content:center; gap:28px; flex-wrap:wrap; margin-top:clamp(64px,12vh,140px)}
-.dicon{width:96px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:8px 4px; border:1px solid transparent; border-radius:8px; background:none; color:inherit; cursor:pointer; transition:background .15s, border-color .15s}
-.dicon:hover{background:rgba(138,92,255,.2); border-color:rgba(255,255,255,.35)}
+.dicon{width:96px; display:flex; flex-direction:column; align-items:center; padding:8px 4px; border:0; background:none; color:inherit; cursor:pointer; outline:none; -webkit-tap-highlight-color:transparent}
 .di{font-size:46px; line-height:1; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(138,92,255,.6)); animation:bob 3s ease-in-out infinite}
 .dicon:nth-child(2) .di{animation-delay:.5s} .dicon:nth-child(3) .di{animation-delay:1s} .dicon:nth-child(4) .di{animation-delay:1.5s} .dicon:nth-child(5) .di{animation-delay:2s}
 .dicon:hover .di{animation:wiggle .5s ease-in-out}
@@ -145,6 +145,16 @@ button{font-family:inherit}
 @keyframes bob{50%{transform:translateY(-6px)}}
 @keyframes wiggle{25%{transform:rotate(-10deg) scale(1.08)} 75%{transform:rotate(10deg) scale(1.08)}}
 @keyframes hop{30%{transform:translateY(-18px) rotate(-14deg) scale(1.2)} 60%{transform:translateY(0) rotate(8deg)} 100%{transform:none}}
+
+/* ---------- XP balloon with a joke ---------- */
+.xptip{position:absolute; z-index:30; width:min(300px,calc(100vw - 24px)); background:#ffffe1; color:#1a1233; border:1px solid #3a3a3a; border-radius:10px; box-shadow:0 10px 26px rgba(0,0,0,.5); font:500 15px/1.4 var(--ui); animation:tipin .35s cubic-bezier(.2,1.4,.4,1); text-align:left}
+.xptip.out{animation:tipout .25s ease-in forwards}
+.xptip-t{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 8px 2px 12px; font-weight:800; color:#3c16ae}
+.xptip-t button{width:20px; height:20px; flex:none; border:1px solid #9a9a9a; border-radius:4px; background:#fff; font:700 10px/1 var(--ui); color:#333; cursor:pointer; padding:0}
+.xptip-b{padding:3px 12px 12px}
+.xptip-tail{position:absolute; bottom:-8px; width:14px; height:14px; background:#ffffe1; border-right:1px solid #3a3a3a; border-bottom:1px solid #3a3a3a; transform:rotate(45deg)}
+@keyframes tipin{from{opacity:0; transform:translateY(10px) scale(.92)}}
+@keyframes tipout{to{opacity:0; transform:translateY(6px)}}
 
 /* ---------- spinning CD ---------- */
 .cd{position:relative; width:180px; height:180px; flex:none; border-radius:50%;
@@ -658,7 +668,49 @@ async function videoToMp3(file, onProgress) {
 /* ---------- visual bits ---------- */
 const buddy = (on = true) => `<svg class="buddy" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="7" r="4.2" fill="${on ? '#7ee03a' : '#c3c6d6'}" stroke="${on ? '#2f6a08' : '#6d7190'}"/><path d="M4 21c0-4.6 3.6-7.6 8-7.6s8 3 8 7.6z" fill="${on ? '#49b8ff' : '#dfe1ea'}" stroke="${on ? '#12508a' : '#6d7190'}"/><circle cx="10.4" cy="5.6" r="1.3" fill="#fff" opacity=".75"/></svg>`;
 const wb = () => `<span class="wb"><i>_</i><i>□</i><i>✕</i></span>`;
-const DESK = ['💿', '📼', '📟', '🎧', '💾'];
+const DESK = [
+  ['💿', 'Хіти 2000-х', [
+    'Записано на Nero Burning ROM. Звідки треки, краще не питай 😏',
+    'Диск «Хіти 2006, vol. 38». Половина пісень не ті, що на обкладинці',
+    'Подряпина на 7-му треку. Тепер він назавжди заїдає на приспіві 💿',
+  ]],
+  ['📼', 'Відеопрокат', [
+    'Перемотай назад перед поверненням, бо штраф 5 гривень! 📼',
+    'Перемотувати олівцем. Олівець у комплект не входить ✏️',
+    'Тут «Титанік», записаний поверх весілля тітки',
+  ]],
+  ['📟', 'Пейджер', [
+    'Нове повідомлення: «ПЕРЕДЗВОНИ. МАМА» 📟',
+    'Нове повідомлення: «ТИ ДЕ?! ВЖЕ 21:40»',
+    'Нове повідомлення: «ПРИПИНИ ТИСНУТИ ІКОНКИ І ГРАЙ»',
+  ]],
+  ['🎧', 'Плеєр', [
+    'Батарейки сіли на найкращій пісні. Як завжди 🔋',
+    'Дроти заплуталися ще у 2005-му і досі не розплутались',
+    'Одне вухо не грає, але ми не здаємось 🎧',
+  ]],
+  ['💾', 'Дискета', [
+    '1,44 МБ! Влізе пів пісні або весь реферат з referat.ru 💾',
+    'Диск A: не відформатований. Відформатувати? Так / Ні / Поплакати',
+    'Не знайшли кнопку «Зберегти»? Ось вона. Будь ласка 😌',
+  ]],
+];
+const tipStep = {}; let tipTimer = 0;
+function showTip(b) {
+  const i = +b.dataset.i, [ic, title, lines] = DESK[i];
+  const k = tipStep[i] = ((tipStep[i] ?? -1) + 1) % lines.length;
+  $$('.xptip').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'xptip';
+  t.innerHTML = `<div class="xptip-t"><span>${ic} ${esc(title)}</span><button type="button" aria-label="Закрити">✕</button></div><div class="xptip-b">${esc(lines[k])}</div><i class="xptip-tail"></i>`;
+  document.body.appendChild(t);
+  const r = b.getBoundingClientRect(), w = t.offsetWidth, h = t.offsetHeight, cx = r.left + r.width / 2;
+  const left = Math.max(12, Math.min(innerWidth - w - 12, cx - w / 2));
+  t.style.left = left + 'px'; t.style.top = (r.top + scrollY - h - 12) + 'px';
+  $('.xptip-tail', t).style.left = (cx - left - 7) + 'px';
+  const close = () => { t.classList.add('out'); setTimeout(() => t.remove(), 260); };
+  $('button', t).addEventListener('click', close);
+  clearTimeout(tipTimer); tipTimer = setTimeout(close, 5000);
+}
 const SPARK_COLS = ['#c3a8ff', '#8a5cff', '#49d6ff', '#ffffff', '#ffd54a'];
 function burst(x, y, n = 12) {
   for (let i = 0; i < n; i++) {
@@ -699,6 +751,7 @@ let setupMsg = null, previewId = null, ampError = null, navBusy = false, lastSig
 function go(screen) { S.screen = screen; save(); render(); window.scrollTo(0, 0); }
 function render() {
   const v = VIEWS[S.screen] || VIEWS.title;
+  $$('.xptip').forEach(t => t.remove());
   app.innerHTML = v.html();
   const sig = S.screen + (S.screen === 'round' && S.game ? ':' + S.game.idx : '');
   if (sig !== lastSig && app.firstElementChild) app.firstElementChild.classList.add('enter');
@@ -729,7 +782,7 @@ VIEWS.title = {
         <button class="btn silver" data-act="setup">⚙ Налаштування</button>
       </div>
       <div class="px stats">🎵 ${S.songs.length} · 👥 ${S.players.length}</div>
-      <div class="desk">${DESK.map(i => `<button class="dicon" data-act="icon" tabindex="-1" aria-hidden="true"><span class="di">${i}</span></button>`).join('')}</div>
+      <div class="desk">${DESK.map(([i, title], n) => `<button class="dicon" data-act="icon" data-i="${n}" tabindex="-1" aria-label="${esc(title)}"><span class="di">${i}</span></button>`).join('')}</div>
     </section>`;
   },
 };
@@ -1265,7 +1318,7 @@ const ACTS = {
   results() { go('results'); },
   toPlayers() { Audio2k.stop(600); go('players'); },
   again() { go('players'); },
-  icon(b) { b.classList.remove('hop'); void b.offsetWidth; b.classList.add('hop'); b.addEventListener('animationend', () => b.classList.remove('hop'), { once: true }); },
+  icon(b) { b.classList.remove('hop'); void b.offsetWidth; b.classList.add('hop'); b.addEventListener('animationend', () => b.classList.remove('hop'), { once: true }); showTip(b); },
 
   async preview(b) {
     const id = b.dataset.id;
@@ -1486,7 +1539,7 @@ function orbAt(x, y) {
   }
   return null;
 }
-const ORB_BLOCKERS = 'button, input, select, textarea, label, a, .win, .amp, .modal, .ovl, .toast';
+const ORB_BLOCKERS = 'button, input, select, textarea, label, a, .win, .amp, .modal, .ovl, .toast, .xptip';
 function popSound() {
   try {
     const ctx = Audio2k.context(); if (!ctx || ctx.state !== 'running') return;
