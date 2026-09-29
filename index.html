@@ -40,9 +40,11 @@ button{font-family:inherit}
 #stars i{position:absolute; border-radius:50%; background:#fff; box-shadow:0 0 6px #b596ff; animation:tw 3s ease-in-out infinite}
 #stars b{position:absolute; color:#d9ccff; font-size:14px; font-weight:400; text-shadow:0 0 8px #8a5cff; animation:tw 3s ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:.2; transform:scale(.7)} 50%{opacity:1; transform:scale(1.15)}}
-#orbs i{position:absolute; bottom:-160px; border-radius:50%; opacity:.6;
-  background:radial-gradient(circle at 30% 26%, rgba(255,255,255,.9) 0 6%, rgba(255,255,255,.16) 14%, rgba(var(--c),.08) 40%, rgba(var(--c),.3) 67%, rgba(255,255,255,.35) 70%, transparent 72%);
-  animation:rise var(--d) linear infinite; animation-delay:var(--dl)}
+#orbs i{position:absolute; bottom:-160px; border-radius:50%; opacity:.7; border:1px solid rgba(255,255,255,.28);
+  background:radial-gradient(circle at 33% 28%, rgba(255,255,255,.9) 0 4%, rgba(255,255,255,.25) 9%, transparent 18%),
+    radial-gradient(closest-side, rgba(var(--c),.05) 0 55%, rgba(var(--c),.2) 80%, rgba(var(--c),.45) 94%, rgba(255,255,255,.5) 99%, transparent 100%);
+  animation:rise var(--d) linear infinite; animation-delay:var(--dl); transition:scale .22s ease-out, opacity .22s ease-out}
+#orbs i.popping{scale:1.6; opacity:0}
 @keyframes rise{0%{transform:translate(0,0)} 50%{transform:translate(var(--sx),-65vh)} 100%{transform:translate(0,-140vh)}}
 .spark{position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); animation:spark .8s ease-out forwards; text-shadow:0 0 6px currentColor}
 @keyframes spark{to{transform:translate(-50%,calc(-50% + 26px)) scale(.3) rotate(90deg); opacity:0}}
@@ -131,14 +133,13 @@ button{font-family:inherit}
 @keyframes xpb{0%{left:-40px} 100%{left:200px}}
 .hero-btns{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px}
 .stats{margin-top:16px; color:#bfb3ff; font-size:14px}
-.desk{display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin-top:40px}
+.desk{display:flex; justify-content:center; gap:28px; flex-wrap:wrap; margin-top:clamp(64px,12vh,140px)}
 .dicon{width:96px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:8px 4px; border:1px solid transparent; border-radius:8px; background:none; color:inherit; cursor:pointer; transition:background .15s, border-color .15s}
 .dicon:hover{background:rgba(138,92,255,.2); border-color:rgba(255,255,255,.35)}
 .di{font-size:46px; line-height:1; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(138,92,255,.6)); animation:bob 3s ease-in-out infinite}
 .dicon:nth-child(2) .di{animation-delay:.5s} .dicon:nth-child(3) .di{animation-delay:1s} .dicon:nth-child(4) .di{animation-delay:1.5s} .dicon:nth-child(5) .di{animation-delay:2s}
 .dicon:hover .di{animation:wiggle .5s ease-in-out}
 .dicon.hop .di{animation:hop .65s cubic-bezier(.2,1.6,.4,1)}
-.dl{font:600 13px/1.3 var(--ui); color:#fff; text-align:center; text-shadow:1px 1px 0 #000, 0 0 6px #000}
 @keyframes bob{50%{transform:translateY(-6px)}}
 @keyframes wiggle{25%{transform:rotate(-10deg) scale(1.08)} 75%{transform:rotate(10deg) scale(1.08)}}
 @keyframes hop{30%{transform:translateY(-18px) rotate(-14deg) scale(1.2)} 60%{transform:translateY(0) rotate(8deg)} 100%{transform:none}}
@@ -370,7 +371,7 @@ button{font-family:inherit}
 @media (max-width:520px){
   .foot .btn.big{flex:1 1 100%}
   .foot > .row{width:100%}
-  .desk{gap:8px} .dicon{width:64px} .di{font-size:36px} .dl{font-size:11px} .dicon:nth-child(n+5){display:none}
+  .desk{gap:8px} .dicon{width:64px} .di{font-size:36px} .dicon:nth-child(n+5){display:none}
   .intro-b{flex-direction:column}
   .cd{width:140px; height:140px}
   .amp-ctrls{gap:10px}
@@ -653,7 +654,7 @@ async function videoToMp3(file, onProgress) {
 /* ---------- visual bits ---------- */
 const buddy = (on = true) => `<svg class="buddy" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="7" r="4.2" fill="${on ? '#7ee03a' : '#c3c6d6'}" stroke="${on ? '#2f6a08' : '#6d7190'}"/><path d="M4 21c0-4.6 3.6-7.6 8-7.6s8 3 8 7.6z" fill="${on ? '#49b8ff' : '#dfe1ea'}" stroke="${on ? '#12508a' : '#6d7190'}"/><circle cx="10.4" cy="5.6" r="1.3" fill="#fff" opacity=".75"/></svg>`;
 const wb = () => `<span class="wb"><i>_</i><i>□</i><i>✕</i></span>`;
-const DESK = [['💿', 'Хіти 2000-х'], ['📼', 'Касета'], ['📟', 'Пейджер'], ['🎧', 'Плеєр'], ['💾', 'Дискета']];
+const DESK = ['💿', '📼', '📟', '🎧', '💾'];
 const SPARK_COLS = ['#c3a8ff', '#8a5cff', '#49d6ff', '#ffffff', '#ffd54a'];
 function burst(x, y, n = 12) {
   for (let i = 0; i < n; i++) {
@@ -724,7 +725,7 @@ VIEWS.title = {
         <button class="btn silver" data-act="setup">⚙ Налаштування</button>
       </div>
       <div class="px stats">🎵 ${S.songs.length} · 👥 ${S.players.length}</div>
-      <div class="desk">${DESK.map(([i, l]) => `<button class="dicon" data-act="icon" tabindex="-1"><span class="di">${i}</span><span class="dl">${l}</span></button>`).join('')}</div>
+      <div class="desk">${DESK.map(i => `<button class="dicon" data-act="icon" tabindex="-1" aria-hidden="true"><span class="di">${i}</span></button>`).join('')}</div>
     </section>`;
   },
 };
@@ -1465,20 +1466,47 @@ function confetti(ms = 5000) {
   }
   $('#stars').innerHTML = h;
 })();
+/* бульбашки на фоні: спливають знизу, від кліку лопаються */
+function orbStyle(o, fromBottom) {
+  const size = 30 + Math.random() * 90, d = 18 + Math.random() * 22;
+  o.style.cssText = `left:${(Math.random() * 96).toFixed(1)}%;width:${size | 0}px;height:${size | 0}px;--d:${d.toFixed(1)}s;--dl:${fromBottom ? 0 : (-Math.random() * d).toFixed(1)}s;--sx:${(Math.random() * 80 - 40) | 0}px;--c:${Math.random() < .6 ? '138,92,255' : '73,214,255'}`;
+}
 (function orbs() {
-  let h = '';
-  for (let i = 0; i < 12; i++) {
-    const size = 30 + Math.random() * 90, d = 18 + Math.random() * 22;
-    h += `<i style="left:${(Math.random() * 100).toFixed(1)}%;width:${size | 0}px;height:${size | 0}px;--d:${d.toFixed(1)}s;--dl:${(-Math.random() * d).toFixed(1)}s;--sx:${(Math.random() * 80 - 40) | 0}px;--c:${Math.random() < .6 ? '138,92,255' : '73,214,255'}"></i>`;
-  }
-  $('#orbs').innerHTML = h;
+  const box = $('#orbs');
+  for (let i = 0; i < 12; i++) { const o = document.createElement('i'); orbStyle(o, false); box.appendChild(o); }
 })();
+function orbAt(x, y) {
+  for (const o of $$('#orbs i:not(.popping)')) {
+    const r = o.getBoundingClientRect();
+    if (Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)) <= r.width / 2) return o;
+  }
+  return null;
+}
+const ORB_BLOCKERS = 'button, input, select, textarea, label, a, .win, .amp, .modal, .ovl, .toast';
+function popSound() {
+  try {
+    const ctx = Audio2k.context(); if (!ctx || ctx.state !== 'running') return;
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(900, t); o.frequency.exponentialRampToValueAtTime(170, t + .08);
+    g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + .1);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + .12);
+  } catch (e) {}
+}
+document.addEventListener('pointerdown', e => {
+  if (e.target.closest(ORB_BLOCKERS)) return;
+  const o = orbAt(e.clientX, e.clientY); if (!o) return;
+  const r = o.getBoundingClientRect();
+  Audio2k.unlock(); popSound(); burst(r.left + r.width / 2, r.top + r.height / 2, 10);
+  o.classList.add('popping');
+  setTimeout(() => { o.classList.remove('popping'); o.style.animation = 'none'; orbStyle(o, true); void o.offsetWidth; o.style.animation = ''; }, 260);
+});
 (function pointerFx() {
   let raf = 0, mx = 0, my = 0, last = 0;
   const fine = matchMedia('(pointer:fine)').matches;
   addEventListener('pointermove', e => {
     mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5;
     if (!raf) raf = requestAnimationFrame(() => { raf = 0; const b = document.body.style; b.setProperty('--mx', mx.toFixed(3)); b.setProperty('--my', my.toFixed(3)); });
+    document.body.style.cursor = !e.target.closest(ORB_BLOCKERS) && orbAt(e.clientX, e.clientY) ? 'pointer' : '';
     if (!fine) return;
     const t = performance.now(); if (t - last < 40) return; last = t;
     const s = document.createElement('span'); s.className = 'spark'; s.textContent = Math.random() < .5 ? '✦' : '✧';
