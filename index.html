@@ -34,17 +34,19 @@ button{font-family:inherit}
 .hide{display:none!important}
 
 /* ---------- background: stars, bubbles, sparkles ---------- */
-#stars,#orbs{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; transition:transform .4s ease-out}
-#stars{transform:translate(calc(var(--mx)*-22px),calc(var(--my)*-22px))}
-#orbs{transform:translate(calc(var(--mx)*-55px),calc(var(--my)*-55px))}
+#stars,#orbs{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
 #stars i{position:absolute; border-radius:50%; background:#fff; box-shadow:0 0 6px #b596ff; animation:tw 3s ease-in-out infinite}
 #stars b{position:absolute; color:#d9ccff; font-size:14px; font-weight:400; text-shadow:0 0 8px #8a5cff; animation:tw 3s ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:.2; transform:scale(.7)} 50%{opacity:1; transform:scale(1.15)}}
 #orbs i{position:absolute; bottom:-160px; border-radius:50%; opacity:.7; border:1px solid rgba(255,255,255,.28);
   background:radial-gradient(circle at 33% 28%, rgba(255,255,255,.9) 0 4%, rgba(255,255,255,.25) 9%, transparent 18%),
     radial-gradient(closest-side, rgba(var(--c),.05) 0 55%, rgba(var(--c),.2) 80%, rgba(var(--c),.45) 94%, rgba(255,255,255,.5) 99%, transparent 100%);
-  animation:rise var(--d) linear infinite; animation-delay:var(--dl); transition:scale .22s ease-out, opacity .22s ease-out}
-#orbs i.popping{scale:1.6; opacity:0}
+  animation:rise var(--d) linear infinite; animation-delay:var(--dl)}
+#orbs i.popped{visibility:hidden}
+.orb-pop{position:fixed; z-index:1; pointer-events:none; border-radius:50%; border:2px solid rgba(255,255,255,.85); box-shadow:0 0 18px rgba(181,150,255,.8), inset 0 0 12px rgba(255,255,255,.45); transform:translate(-50%,-50%); animation:orbpop .32s ease-out forwards}
+@keyframes orbpop{to{transform:translate(-50%,-50%) scale(1.45); opacity:0}}
+.drop-fx{position:fixed; z-index:1; pointer-events:none; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 35%,#fff,rgba(181,150,255,.9)); box-shadow:0 0 6px rgba(181,150,255,.9); transform:translate(-50%,-50%); animation:dropfx .45s ease-out forwards}
+@keyframes dropfx{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.3); opacity:0}}
 @keyframes rise{0%{transform:translate(0,0)} 50%{transform:translate(var(--sx),-65vh)} 100%{transform:translate(0,-140vh)}}
 .spark{position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); animation:spark .8s ease-out forwards; text-shadow:0 0 6px currentColor}
 @keyframes spark{to{transform:translate(-50%,calc(-50% + 26px)) scale(.3) rotate(90deg); opacity:0}}
@@ -397,7 +399,7 @@ button{font-family:inherit}
 
 <script>
 const CONFIG = {
-  BDAY_NAME: 'Роксолана',   // ім'я за замовчуванням (можна змінити в налаштуваннях гри)
+  BDAY_NAME: 'Roksi',       // ім'я за замовчуванням (можна змінити в налаштуваннях гри)
   FADE_SEC: 2,              // затухання на початку і в кінці кожної пісні, сек
   VIDEO_KBPS: 160,          // якість mp3, який гра робить із відео
   DRIVE_FOLDER: 'https://drive.google.com/drive/folders/1OLJ_InETKTPLoSFsH7GAdx4KIXESMbhp',   // папка з піснями
@@ -425,7 +427,9 @@ function loadState() {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
       const s = JSON.parse(raw);
-      return Object.assign(defaults(), s, { settings: Object.assign(defaults().settings, s.settings || {}) });
+      const st = Object.assign(defaults(), s, { settings: Object.assign(defaults().settings, s.settings || {}) });
+      if (st.settings.bday === 'Роксолана') st.settings.bday = CONFIG.BDAY_NAME;   // старе ім'я -> ROKSI
+      return st;
     }
   } catch (e) {}
   return defaults();
@@ -753,7 +757,7 @@ VIEWS.setup = {
 
       <div class="win"><div class="win-t"><span class="ttl">🎂 party.exe</span>${wb()}</div>
         <div class="win-b"><label class="fld"><span>Ім’я іменинниці (для заголовка)</span>
-          <input id="bday" type="text" maxlength="30" value="${esc(s.bday)}" placeholder="наприклад, Роксолана"></label></div></div>
+          <input id="bday" type="text" maxlength="30" value="${esc(s.bday)}" placeholder="наприклад, Roksi"></label></div></div>
 
       <div class="win"><div class="win-t"><span class="ttl">☁️ Пісні з Google Drive</span>${wb()}</div>
         <div class="win-b">
@@ -893,7 +897,7 @@ async function importPack(file) {
       const el = $('#addStatus'); if (el) el.textContent = `📂 Додаю пісні з файлу: ${added + skipped} з ${songs.length}`;
     }
     (head.players || []).forEach(n => { if (!S.players.some(p => p.name === n)) S.players.push({ id: uid(), name: n }); });
-    if (head.settings) Object.assign(S.settings, { bday: head.settings.bday || S.settings.bday, clipSec: head.settings.clipSec ?? S.settings.clipSec, showAnswer: !!head.settings.showAnswer });
+    if (head.settings) Object.assign(S.settings, { bday: (head.settings.bday === 'Роксолана' ? CONFIG.BDAY_NAME : head.settings.bday) || S.settings.bday, clipSec: head.settings.clipSec ?? S.settings.clipSec, showAnswer: !!head.settings.showAnswer });
     save();
     setupMsg = { text: `✓ З файлу додано пісень: ${added}${skipped ? ` (ще ${skipped} вже були)` : ''}. Гравців: ${S.players.length}.` };
   } catch (e) {
@@ -1476,7 +1480,7 @@ function orbStyle(o, fromBottom) {
   for (let i = 0; i < 12; i++) { const o = document.createElement('i'); orbStyle(o, false); box.appendChild(o); }
 })();
 function orbAt(x, y) {
-  for (const o of $$('#orbs i:not(.popping)')) {
+  for (const o of $$('#orbs i:not(.popped)')) {
     const r = o.getBoundingClientRect();
     if (Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)) <= r.width / 2) return o;
   }
@@ -1495,10 +1499,20 @@ function popSound() {
 document.addEventListener('pointerdown', e => {
   if (e.target.closest(ORB_BLOCKERS)) return;
   const o = orbAt(e.clientX, e.clientY); if (!o) return;
-  const r = o.getBoundingClientRect();
-  Audio2k.unlock(); popSound(); burst(r.left + r.width / 2, r.top + r.height / 2, 10);
-  o.classList.add('popping');
-  setTimeout(() => { o.classList.remove('popping'); o.style.animation = 'none'; orbStyle(o, true); void o.offsetWidth; o.style.animation = ''; }, 260);
+  const r = o.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  o.classList.add('popped');   // бульбашка зникає на місці
+  Audio2k.unlock(); popSound();
+  const ring = document.createElement('span'); ring.className = 'orb-pop';
+  Object.assign(ring.style, { left: cx + 'px', top: cy + 'px', width: r.width + 'px', height: r.height + 'px' });
+  document.body.appendChild(ring); setTimeout(() => ring.remove(), 360);
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('span'); d.className = 'drop-fx';
+    const a = Math.PI * 2 * i / 10 + Math.random() * .3, dist = r.width / 2 + 14 + Math.random() * 26;
+    Object.assign(d.style, { left: (cx + Math.cos(a) * r.width * .45) + 'px', top: (cy + Math.sin(a) * r.width * .45) + 'px' });
+    d.style.setProperty('--dx', (Math.cos(a) * (dist - r.width * .45)).toFixed(1) + 'px'); d.style.setProperty('--dy', (Math.sin(a) * (dist - r.width * .45)).toFixed(1) + 'px');
+    document.body.appendChild(d); setTimeout(() => d.remove(), 480);
+  }
+  setTimeout(() => { o.style.animation = 'none'; orbStyle(o, true); void o.offsetWidth; o.style.animation = ''; o.classList.remove('popped'); }, 400);
 });
 (function pointerFx() {
   let raf = 0, mx = 0, my = 0, last = 0;
