@@ -5,3 +5,9 @@
 *.aac
 *.flac
 *.ogg
+*.mp4
+*.mov
+*.m4v
+*.webm
+*.mkv
+_test/
