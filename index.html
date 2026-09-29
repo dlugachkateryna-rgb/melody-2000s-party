@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#140a3d">
+<title>Вгадай мелодію 2000-х</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💿</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Press+Start+2P&family=Unbounded:wght@700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg0:#07041a; --bg1:#140a3d;
+  --p1:#c3a8ff; --p2:#8a5cff; --p3:#6a35f0; --p4:#4b1dc8; --p5:#2a0f86;
+  --cyan:#49d6ff; --lime:#9be83a; --gold:#ffd54a;
+  --win-bg:#f0edfb; --ink:#1a1233; --ink2:#4a4270;
+  --ui: Tahoma, Verdana, "Segoe UI", sans-serif;
+  --tr: "Trebuchet MS", Tahoma, Verdana, sans-serif;
+  --pixel: "Press Start 2P", monospace;
+  --lcd: "VT323", "Courier New", monospace;
+  --chrome: "Unbounded", "Arial Black", sans-serif;
+  --hand: "Caveat", "Comic Sans MS", cursive;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100vh; color:#fff; font-family:var(--ui);
+  background:
+    radial-gradient(1100px 650px at 50% -12%, #3d1ba3 0%, transparent 62%),
+    radial-gradient(800px 600px at 105% 105%, #1b2a8a 0%, transparent 60%),
+    radial-gradient(700px 500px at -5% 80%, #2a1070 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg1), var(--bg0));
+  background-attachment:fixed;
+}
+button{font-family:inherit}
+.hide{display:none!important}
+
+/* ---------- background: stars, sparkles, photos ---------- */
+#stars{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+#stars i{position:absolute; border-radius:50%; background:#fff; box-shadow:0 0 6px #b596ff; animation:tw 3s ease-in-out infinite}
+#stars b{position:absolute; color:#d9ccff; font-size:14px; font-weight:400; text-shadow:0 0 8px #8a5cff; animation:tw 3s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.2; transform:scale(.7)} 50%{opacity:1; transform:scale(1.15)}}
+.spark{position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); animation:spark .8s ease-out forwards; text-shadow:0 0 6px currentColor}
+@keyframes spark{to{transform:translate(-50%,calc(-50% + 26px)) scale(.3) rotate(90deg); opacity:0}}
+#deco{position:fixed; inset:0; z-index:1; pointer-events:none; display:none}
+#deco .pola{position:absolute; width:170px}
+@media (min-width:1600px){ #deco{display:block} }
+.confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:60}
+
+/* ---------- type ---------- */
+.chrome{
+  font-family:var(--chrome); font-weight:900; line-height:1.02; letter-spacing:-.5px; margin:0;
+  background:linear-gradient(180deg,#ffffff 0%,#f1efff 28%,#aca6d9 47%,#3d2d8a 50%,#6b5bc4 60%,#d8d2ff 82%,#ffffff 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 2px 0 #2a0f86) drop-shadow(0 0 14px rgba(138,92,255,.75));
+}
+.px{font-family:var(--pixel); font-size:12px; line-height:1.7; letter-spacing:1px}
+.dim{color:#bfb3ff; opacity:.85}
+.dim2{color:#7a7399}
+.blink{animation:blink 1.1s steps(2) infinite}
+@keyframes blink{50%{opacity:.3}}
+
+/* ---------- layout ---------- */
+#app{position:relative; z-index:2}
+.screen{max-width:1180px; margin:0 auto; padding:18px 16px 40px}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; flex-wrap:wrap}
+.linkbtn{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.25); color:#d9d2ff; font:10px/1 var(--pixel); padding:9px 11px; border-radius:6px; cursor:pointer}
+.linkbtn:hover{background:rgba(138,92,255,.25)}
+.row{display:flex; flex-wrap:wrap; align-items:center}
+.gap{gap:10px}
+.foot{display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center; margin-top:18px}
+
+/* ---------- XP windows ---------- */
+.win{background:var(--win-bg); color:var(--ink); border:1px solid #1f0c6e; border-radius:9px 9px 5px 5px; box-shadow:0 14px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(181,150,255,.25); overflow:hidden; margin-bottom:16px}
+.win-t{display:flex; align-items:center; gap:8px; min-height:32px; padding:3px 5px 3px 10px; color:#fff; font:bold 14px/1.2 var(--tr); text-shadow:1px 1px 0 #1d0a5a; background:linear-gradient(180deg,#a684ff 0%,#6f3cf5 9%,#5e2be6 45%,#5022d6 86%,#3c16ae 100%)}
+.win-t .ttl{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.wb{display:flex; gap:3px; flex:none}
+.wb i{width:21px; height:21px; border:1px solid rgba(255,255,255,.85); border-radius:3px; background:linear-gradient(180deg,#a887ff,#5b2ce0); display:grid; place-items:center; font:bold 11px/1 var(--ui); color:#fff; font-style:normal}
+.win-b{padding:16px; background:linear-gradient(180deg,#f8f6ff,#ebe7fb)}
+.win-b.dark{background:linear-gradient(180deg,#1d1446,#0d0826); color:#fff}
+
+/* ---------- glossy buttons ---------- */
+.btn{--c1:#c9b0ff;--c2:#8a5cff;--c3:#6a35f0;--c4:#8358ff;--bd:#2a0f86;
+  position:relative; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 22px; min-height:46px; border-radius:999px; border:1px solid var(--bd); color:#fff;
+  font:bold 16px/1.1 var(--tr); letter-spacing:.3px; text-shadow:0 1px 0 rgba(20,5,70,.7);
+  background:linear-gradient(180deg,var(--c1) 0%,var(--c2) 48%,var(--c3) 52%,var(--c4) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 -2px 6px rgba(20,5,70,.35), 0 4px 16px rgba(106,53,240,.45);
+  cursor:pointer; transition:filter .15s, transform .1s; text-align:center}
+.btn::before{content:""; position:absolute; left:10%; right:10%; top:2px; height:46%; border-radius:999px; background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.06)); pointer-events:none}
+.btn:hover{filter:brightness(1.12)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{filter:grayscale(.85) brightness(.75); cursor:not-allowed}
+.btn.silver{--c1:#ffffff;--c2:#e4e6f0;--c3:#bcc0d3;--c4:#d6d9e6;--bd:#6d7190; color:#241a4d; text-shadow:0 1px 0 #fff; box-shadow:inset 0 1px 0 #fff, inset 0 -2px 6px rgba(40,40,80,.2), 0 4px 14px rgba(0,0,0,.35)}
+.btn.big{font-size:19px; padding:15px 30px; min-height:58px}
+.btn.sm{font-size:13px; padding:8px 14px; min-height:36px}
+
+/* ---------- title ---------- */
+.title-screen{text-align:center; padding-top:6vh}
+.hb{color:#e6dcff; font-size:clamp(11px,1.8vw,16px); text-shadow:0 0 10px #8a5cff}
+.h1{font-size:clamp(30px,8.2vw,92px); margin-top:18px}
+.h2{font-size:clamp(56px,15vw,170px); margin-top:4px; position:relative; display:inline-block}
+.h2::after{content:"✦"; position:absolute; right:-.35em; top:.05em; font-size:.3em; color:#fff; -webkit-text-fill-color:#fff; filter:none; text-shadow:0 0 12px #b596ff, 0 0 26px #8a5cff; animation:tw 1.6s ease-in-out infinite}
+.sub{color:#9fe8ff; margin-top:10px; font-size:clamp(10px,1.4vw,13px)}
+.xpboot{width:190px; height:20px; margin:22px auto 0; border:2px solid #b9bdd0; border-radius:5px; background:#05030f; overflow:hidden; position:relative}
+.xpboot i{position:absolute; top:2px; width:12px; height:12px; border-radius:2px; background:linear-gradient(180deg,#e0d2ff,#8a5cff 50%,#5a28e0); animation:xpb 1.8s linear infinite}
+.xpboot i:nth-child(2){animation-delay:.14s} .xpboot i:nth-child(3){animation-delay:.28s}
+@keyframes xpb{0%{left:-40px} 100%{left:200px}}
+.hero-btns{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px}
+.stats{margin-top:16px; color:#bfb3ff; font-size:10px}
+.strip{display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:38px}
+.strip .pola{width:150px}
+
+/* ---------- polaroids ---------- */
+.pola{margin:0; background:#fdfdfd; padding:8px 8px 6px; border-radius:2px; box-shadow:0 10px 24px rgba(0,0,0,.5); transform:rotate(var(--r,0deg))}
+.pola .ph{aspect-ratio:1/1; overflow:hidden; background:#222}
+.pola img{width:100%; height:100%; object-fit:cover; display:block}
+.pola .ph.empty{display:grid; place-items:center; align-content:center; gap:6px; background:linear-gradient(135deg,#3b1a9e,#1b2a8a); color:#d9ccff; font:12px var(--ui)}
+.pola .ph.empty span{font-size:34px}
+.pola figcaption{font:600 22px/1.1 var(--hand); color:#2a2250; text-align:center; padding-top:6px; min-height:28px}
+
+/* ---------- setup ---------- */
+.fld{display:flex; flex-direction:column; gap:6px; font:bold 13px var(--ui); color:var(--ink2)}
+.fld input,.fld select{font:16px var(--ui); padding:10px 12px; border:1px solid #8f88b8; border-radius:4px; background:#fff; color:var(--ink); box-shadow:inset 1px 1px 2px rgba(0,0,0,.15); width:100%}
+.fld input:focus,.fld select:focus,.sname:focus,.sstart:focus{outline:2px solid #8a5cff; outline-offset:0}
+.info{font:14px var(--ui); color:#2f6a08; padding:10px 0}
+.chk{display:flex; gap:10px; align-items:flex-start; font:14px var(--ui); color:var(--ink); cursor:pointer; grid-column:1/-1}
+.chk input{width:18px; height:18px; margin:1px 0 0; accent-color:#6a35f0; flex:none}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.drop{display:flex; align-items:center; gap:14px; padding:18px; border:2px dashed #8a5cff; border-radius:8px; background:repeating-linear-gradient(45deg,#f6f2ff 0 12px,#efe9ff 12px 24px); cursor:pointer; color:var(--ink); font:15px var(--ui)}
+.drop span{color:var(--ink2); font-size:13px}
+.drop.over{background:#e2d6ff; border-style:solid}
+.drop-ic{font-size:40px; animation:spin 3s linear infinite; flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.note{font:13px var(--ui); color:var(--ink2); margin-top:10px}
+.note.warn{color:#8a4b00; background:#fff4d6; border:1px solid #e8c56a; padding:8px 10px; border-radius:4px}
+.songs{list-style:none; margin:14px 0; padding:0; display:flex; flex-direction:column; gap:6px}
+.songs .empty{font:14px var(--ui); color:var(--ink2); padding:14px; text-align:center; border:1px dashed #cfc8ee; border-radius:6px}
+.song{display:grid; grid-template-columns:34px minmax(0,1fr) 52px auto 34px 34px 34px 34px; grid-template-areas:"n name dur st pv up dn del"; gap:8px; align-items:center; padding:6px 8px; background:#fff; border:1px solid #d8d2f2; border-radius:6px}
+.song:nth-child(even){background:#f6f3ff}
+.song .num{grid-area:n; font-size:10px; color:#6a35f0}
+.sname{grid-area:name; font:15px var(--ui); padding:7px 9px; border:1px solid #d8d2f2; border-radius:4px; min-width:0; width:100%; color:var(--ink); background:#fff}
+.song .dur{grid-area:dur; font:21px/1 var(--lcd); color:#4a4270; text-align:right}
+.song .st{grid-area:st; font:12px var(--ui); color:#4a4270; display:flex; align-items:center; gap:4px; white-space:nowrap}
+.sstart{width:58px; padding:6px; border:1px solid #d8d2f2; border-radius:4px; font:14px var(--ui); color:var(--ink)}
+.ib{width:34px; height:34px; border-radius:50%; border:1px solid #6d7190; background:linear-gradient(#fff,#d7d9e6); color:#241a4d; font:bold 14px/1 var(--ui); cursor:pointer; display:grid; place-items:center; padding:0}
+.ib:disabled{opacity:.3; cursor:default}
+.ib.on{background:linear-gradient(#c9b0ff,#6a35f0); color:#fff; border-color:#2a0f86}
+.ib.del{color:#6a35f0}
+.song [data-act="preview"]{grid-area:pv} .song [data-act="up"]{grid-area:up} .song [data-act="down"]{grid-area:dn} .song [data-act="delSong"]{grid-area:del}
+
+/* ---------- players (MSN) ---------- */
+.msn-head{display:flex; align-items:center; gap:12px; padding-bottom:12px; border-bottom:1px solid #d8d2f2; font:15px var(--ui)}
+.msn-head .buddy{width:40px; height:40px}
+.addp{display:flex; gap:10px; margin-top:14px}
+.addp input{flex:1; min-width:0; font:17px var(--ui); padding:11px 12px; border:1px solid #8f88b8; border-radius:4px; color:var(--ink)}
+.addp input:focus{outline:2px solid #8a5cff}
+.plist{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+.empty-s{font:14px var(--ui); color:#7a7399; padding:6px 2px}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex; align-items:center; gap:8px; max-width:100%; padding:9px 14px 9px 10px; border-radius:999px; border:1px solid #8f93ad; background:linear-gradient(#ffffff,#dfe1ee); font:bold 17px/1.1 var(--tr); color:#241a4d; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.18); transition:transform .1s}
+.chip > span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.chip:active{transform:scale(.97)}
+.chip.y{border-color:#3f7f10; background:linear-gradient(#f5ffe8,#caf59c)}
+.chip.static{cursor:default}
+.chip .x{margin-left:2px; width:24px; height:24px; border-radius:50%; border:1px solid #9a9fbf; background:#fff; cursor:pointer; font:bold 11px/1 var(--ui); color:#6a35f0; flex:none; padding:0}
+.chip.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.6)} 70%{transform:scale(1.08)} 100%{transform:scale(1)}}
+.buddy{flex:none}
+
+/* ---------- round ---------- */
+.round-head{display:flex; align-items:baseline; justify-content:center; gap:14px; margin:4px 0 16px}
+.songno{font-size:clamp(40px,7vw,78px)}
+.of{color:#bfb3ff; font-size:clamp(11px,1.6vw,16px)}
+.amp{max-width:780px; margin:0 auto 18px; background:linear-gradient(180deg,#3d3c56,#1d1c2c); border:1px solid #0c0b16; border-radius:8px; box-shadow:0 18px 50px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18); padding-bottom:14px}
+.amp-t{height:22px; display:flex; align-items:center; gap:8px; padding:0 8px; font:9px/1 var(--pixel); color:#d6ccff; background:repeating-linear-gradient(180deg,#5a4fa0 0 1px,#2e2860 1px 3px); border-radius:8px 8px 0 0; letter-spacing:1px; white-space:nowrap}
+.amp-t .grip{flex:1; height:6px; background:repeating-linear-gradient(90deg,#c9bfff 0 2px,transparent 2px 4px); opacity:.45}
+.amp-body{padding:12px 14px 0}
+.lcd{display:flex; gap:14px; align-items:center; background:#05030f; border:2px inset #2a2940; border-radius:4px; padding:8px 12px}
+.lcd-time{font:60px/.9 var(--lcd); color:#c9b6ff; text-shadow:0 0 10px rgba(138,92,255,.95); min-width:128px}
+.lcd-r{flex:1; min-width:0}
+.marq{overflow:hidden; white-space:nowrap; font:13px/1.6 var(--pixel); color:#8ff0ff; text-shadow:0 0 8px rgba(73,214,255,.8)}
+.marq span{display:inline-block; padding-left:100%; animation:marq 16s linear infinite}
+@keyframes marq{to{transform:translateX(-100%)}}
+.lcd-meta{display:flex; gap:12px; margin-top:6px; font:19px/1 var(--lcd); color:#7f76b8; overflow:hidden; white-space:nowrap}
+.lcd-meta b{color:#9be83a; font-weight:400; margin-left:auto}
+.viz{display:block; width:100%; height:120px; margin-top:12px; background:linear-gradient(180deg,#07051a,#0d0a26); border:1px solid #000; border-radius:3px}
+.seek{height:10px; margin-top:10px; background:#0a0818; border:1px solid #000; border-radius:5px; overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.8)}
+.seek i{display:block; height:100%; width:0; background:linear-gradient(90deg,#4b1dc8,#8a5cff 60%,#49d6ff); box-shadow:0 0 10px #8a5cff}
+.amp-ctrls{display:flex; align-items:center; gap:14px; margin-top:14px}
+.rb{width:54px; height:54px; border-radius:50%; border:1px solid #0c0b16; background:linear-gradient(180deg,#e3e5ee,#9296af 50%,#71758f 52%,#a8acc2); color:#1d1c2c; font:bold 20px/1 var(--ui); cursor:pointer; box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(0,0,0,.5); display:grid; place-items:center; flex:none; padding:0}
+.rb.play{width:76px; height:76px; font-size:28px; color:#fff; border-color:#2a0f86; background:linear-gradient(180deg,#dccbff,#8a5cff 48%,#6a35f0 52%,#8c62ff); box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 22px rgba(138,92,255,.7); text-shadow:0 1px 0 #2a0f86}
+.rb.play.on{animation:pulse 1.2s ease-in-out infinite}
+.rb:disabled{filter:grayscale(1) brightness(.6); cursor:not-allowed}
+@keyframes pulse{50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 40px rgba(138,92,255,1)}}
+.amp-msg{flex:1; min-width:0; font-size:10px; color:#c9b6ff; text-align:right}
+.reveal{margin-top:12px; padding:10px 14px; background:#05030f; border:1px dashed #8a5cff; border-radius:4px; font:15px var(--pixel); color:#ffd54a; text-align:center; line-height:1.6; word-break:break-word}
+.hint{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:0 0 8px; font-size:11px}
+.hint span:first-child{color:#caf59c} .hint span:last-child{color:#c9ccdb; text-align:right}
+.sides{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+.side{margin:0; display:flex; flex-direction:column}
+.side .win-b{flex:1; min-height:170px;display:flex; flex-wrap:wrap; align-content:flex-start; gap:10px}
+.side.yes .win-t{background:linear-gradient(180deg,#d4ffa6 0%,#7fd12a 9%,#62b71a 45%,#4fa40f 86%,#3a8008 100%); text-shadow:1px 1px 0 #1f4a04}
+.side.no .win-t{background:linear-gradient(180deg,#dfe1ea 0%,#9095b2 9%,#7a7fa0 45%,#666b8e 86%,#4f5475 100%); text-shadow:1px 1px 0 #2a2d44}
+.side.yes .win-b{background:linear-gradient(180deg,#f6fff0,#e4f7d2)}
+
+/* ---------- overlays ---------- */
+.ovl{position:fixed; inset:0; z-index:40; display:grid; place-items:center; padding:16px; background:rgba(7,4,26,.78); backdrop-filter:blur(3px); animation:fin .25s ease-out}
+.ovl.out{animation:fout .3s ease-in forwards}
+@keyframes fin{from{opacity:0}} @keyframes fout{to{opacity:0}}
+.ovl .win{width:min(580px,100%); margin:0}
+.intro-b{display:flex; gap:20px; align-items:center}
+.intro-b .pola{width:210px; flex:none; animation:drop .5s cubic-bezier(.2,1.5,.4,1)}
+@keyframes drop{from{transform:translateY(-40px) rotate(-14deg); opacity:0}}
+.intro-txt{flex:1; min-width:0; text-align:center}
+.intro-no{font-size:clamp(40px,8vw,62px)}
+.intro-txt .px{color:#9fe8ff; margin:10px 0 14px; font-size:11px}
+.xpfill{height:22px; border:1px solid #6d7190; border-radius:4px; background:#fff; padding:2px; overflow:hidden}
+.xpfill i{display:block; height:100%; width:0; background:repeating-linear-gradient(90deg,#8a5cff 0 10px,transparent 10px 12px); animation:fill 2.1s steps(18) forwards}
+@keyframes fill{to{width:100%}}
+.go-b{text-align:center; padding:26px 16px}
+.go-t{font-size:clamp(44px,10vw,84px)}
+.modal{position:fixed; inset:0; z-index:70; display:grid; place-items:center; padding:16px; background:rgba(7,4,26,.6)}
+.modal .win{width:min(420px,100%); margin:0}
+.dlg-row{display:flex; gap:12px; align-items:flex-start; font:15px/1.45 var(--ui)}
+.dlg-ic{font-size:28px; flex:none}
+.dlg-in{width:100%; margin-top:14px; font:17px var(--ui); padding:10px 12px; border:1px solid #8f88b8; border-radius:4px; color:var(--ink)}
+.dlg-btns{display:flex; justify-content:flex-end; gap:10px; margin-top:16px}
+
+/* ---------- results ---------- */
+.res-head{text-align:center}
+.res-head .h1{font-size:clamp(28px,6vw,64px); margin-top:12px}
+.podium{display:flex; justify-content:center; align-items:flex-end; gap:12px; max-width:760px; margin:30px auto 28px}
+.pod{flex:1 1 0; min-width:0; max-width:230px; display:flex; flex-direction:column; align-items:center; opacity:0; transform:translateY(40px); transition:opacity .5s, transform .7s cubic-bezier(.2,1.5,.4,1)}
+.pod.show{opacity:1; transform:none}
+.pod .who{text-align:center; margin-bottom:10px; width:100%}
+.crown{font-size:40px; animation:tw 1.4s ease-in-out infinite}
+.pnames{font:bold clamp(15px,2.2vw,22px)/1.25 var(--tr); color:#fff; text-shadow:0 0 12px rgba(138,92,255,.9); word-break:break-word}
+.ppct{font:clamp(26px,4vw,40px)/1 var(--lcd); color:#9fe8ff; margin-top:4px; text-shadow:0 0 10px rgba(73,214,255,.8)}
+.blk{width:100%; border-radius:8px 8px 0 0; display:grid; place-items:center; border:1px solid rgba(0,0,0,.4); box-shadow:inset 0 2px 0 rgba(255,255,255,.7), 0 0 30px rgba(138,92,255,.45)}
+.blk span{font:900 clamp(36px,6vw,60px)/1 var(--chrome); color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.p1 .blk{height:200px; background:linear-gradient(180deg,#fff6c4,#ffd54a 35%,#d9a51a 70%,#b8860b)}
+.p2 .blk{height:145px; background:linear-gradient(180deg,#ffffff,#d7d9e6 35%,#a4a8bf 70%,#80859f)}
+.p3 .blk{height:105px; background:linear-gradient(180deg,#ffe2c2,#d9955a 40%,#b06d34 75%,#8c5222)}
+.rank-win{opacity:0; transition:opacity .6s}
+.rank-win.show{opacity:1}
+.rrow{display:grid; grid-template-columns:40px minmax(0,1.2fr) minmax(0,2fr) 70px 52px minmax(0,1.4fr); grid-template-areas:"pl name bar pct sc tt"; gap:12px; align-items:center; padding:10px 8px; border-bottom:1px solid #ddd6f5; font:16px var(--ui)}
+.rrow:last-child{border-bottom:0}
+.rrow.top{background:linear-gradient(90deg,rgba(138,92,255,.12),transparent)}
+.rpl{grid-area:pl; font-size:13px; color:#6a35f0; text-align:center}
+.rname{grid-area:name; font:bold 17px var(--tr); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.rbar{grid-area:bar; height:16px; background:#e2ddf6; border:1px solid #b9b0e0; border-radius:3px; overflow:hidden; padding:1px}
+.rbar i{display:block; height:100%; background:repeating-linear-gradient(90deg,#8a5cff 0 8px,#6a35f0 8px 9px); border-radius:2px}
+.rpct{grid-area:pct; font:30px/1 var(--lcd); color:#4b1dc8; text-align:right}
+.rsc{grid-area:sc; font:13px var(--ui)}
+.rtt{grid-area:tt; font:14px var(--ui); color:var(--ink2)}
+
+/* ---------- responsive ---------- */
+@media (max-width:760px){
+  .grid2{grid-template-columns:1fr}
+  .lcd-time{font-size:44px; min-width:92px}
+  .marq{font-size:11px}
+  .viz{height:90px}
+  .rrow{grid-template-columns:32px minmax(0,1fr) 64px; grid-template-areas:"pl name pct" "pl bar bar" "pl tt sc"; row-gap:6px}
+  .rsc{text-align:right}
+  .p1 .blk{height:150px} .p2 .blk{height:110px} .p3 .blk{height:80px}
+}
+@media (max-width:640px){
+  .song{grid-template-columns:28px minmax(0,1fr) repeat(4,34px); grid-template-areas:"n name name name name dur" "st st pv up dn del"}
+  .song .dur{text-align:right}
+}
+@media (max-width:520px){
+  .foot .btn.big{flex:1 1 100%}
+  .foot > .row{width:100%}
+  .strip{gap:10px} .strip .pola{width:96px} .strip .pola:nth-child(n+4){display:none}
+  .strip .pola figcaption{font-size:16px; min-height:20px}
+  .intro-b{flex-direction:column}
+  .intro-b .pola{width:170px}
+  .amp-ctrls{gap:10px}
+  .rb{width:48px; height:48px}
+  .rb.play{width:66px; height:66px}
+  .hint{font-size:9px; gap:8px}
+  .lcd-meta span:nth-child(n+2){display:none}
+  .sides{gap:10px}
+  .side .win-b{padding:10px; gap:8px}
+  .chip{font-size:15px; padding:8px 12px 8px 8px}
+  .podium{gap:6px}
+  .crown{font-size:30px}
+}
+</style>
+</head>
+<body>
+<div id="stars" aria-hidden="true"></div>
+<div id="deco" aria-hidden="true"></div>
+<main id="app"></main>
+
+<script>
+/* ============================================================
+   НАЛАШТУВАННЯ
+   Фото: поклади файли в папку photos/ і впиши їх сюди.
+   caption - необов'язковий підпис на полароїді.
+   ============================================================ */
+const CONFIG = {
+  PHOTOS: [
+    // { src: 'photos/01.jpg', caption: '2007' },
+  ],
+  FADE_SEC: 2,
+};
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const pad = (n, l = 2) => String(n).padStart(l, '0');
+const fmt = s => { s = Math.max(0, Math.floor(s || 0)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); };
+const setText = (el, t) => { if (el && el.textContent !== t) el.textContent = t; };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const app = $('#app');
+
+/* ---------- state (localStorage) ---------- */
+const LS_KEY = 'y2k-melody-v1';
+const defaults = () => ({ screen: 'title', settings: { bday: '', clipSec: 30, showAnswer: false }, songs: [], players: [], game: null });
+let S = loadState();
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      return Object.assign(defaults(), s, { settings: Object.assign(defaults().settings, s.settings || {}) });
+    }
+  } catch (e) {}
+  return defaults();
+}
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+const songById = id => S.songs.find(s => s.id === id);
+
+/* ---------- file storage (IndexedDB, fallback to memory) ---------- */
+const Store = (() => {
+  const mem = new Map(); let dbp = null; let ok = true;
+  function open() {
+    if (!dbp) dbp = new Promise((res, rej) => {
+      try {
+        const r = indexedDB.open('y2k-melody', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('files');
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => rej(r.error);
+      } catch (e) { rej(e); }
+    });
+    return dbp;
+  }
+  async function run(mode, fn) {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('files', mode); const req = fn(tx.objectStore('files'));
+      tx.oncomplete = () => res(req.result); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error);
+    });
+  }
+  return {
+    get persistent() { return ok; },
+    async probe() { try { await open(); } catch (e) { ok = false; } },
+    async put(k, v) { mem.set(k, v); try { await run('readwrite', s => s.put(v, k)); } catch (e) { ok = false; } },
+    async get(k) { if (mem.has(k)) return mem.get(k); try { const v = await run('readonly', s => s.get(k)); if (v) mem.set(k, v); return v; } catch (e) { ok = false; return undefined; } },
+    async del(k) { mem.delete(k); try { await run('readwrite', s => s.delete(k)); } catch (e) { ok = false; } },
+  };
+})();
+
+/* ---------- audio engine: плавне затухання на початку і в кінці ---------- */
+const Audio2k = (() => {
+  let ctx = null, gain = null, analyser = null, el = null, url = null, timer = null, buf = null;
+  let clip = { start: 0, end: 0 }, st = 'idle', ramp = null, key = null, waiters = [];
+  const subs = new Set();
+  const fadeSec = () => CONFIG.FADE_SEC;
+  function set(s) {
+    st = s;
+    subs.forEach(f => { try { f(s); } catch (e) {} });
+    if (s === 'ready' || s === 'idle') { const w = waiters; waiters = []; w.forEach(r => r()); }
+  }
+  function ensure() {
+    if (ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ctx = new AC();
+    gain = ctx.createGain(); gain.gain.value = 0;
+    analyser = ctx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.72;
+    buf = new Uint8Array(analyser.frequencyBinCount);
+    el = new Audio(); el.preload = 'auto';
+    ctx.createMediaElementSource(el).connect(gain);
+    gain.connect(analyser); analyser.connect(ctx.destination);
+    el.addEventListener('ended', () => { if (st !== 'idle' && st !== 'ready') finish(); });
+  }
+  function unlock() { try { ensure(); if (ctx.state === 'suspended') ctx.resume(); } catch (e) {} }
+  function mult() { if (!ramp) return 1; const k = Math.min(1, (performance.now() - ramp.t0) / ramp.ms); return ramp.from + (ramp.to - ramp.from) * k; }
+  function setGain(v, instant) {
+    const now = ctx.currentTime;
+    if (instant) { gain.gain.cancelScheduledValues(now); gain.gain.setValueAtTime(v, now); }
+    else gain.gain.setTargetAtTime(v, now, 0.025);
+  }
+  function tick() {
+    if (st !== 'playing' && st !== 'pausing' && st !== 'stopping') return;
+    const t = el.currentTime, f = fadeSec();
+    if (t >= clip.end - 0.03) { finish(); return; }
+    // fade-in перші 2 сек, fade-out останні 2 сек фрагмента
+    let g = Math.max(0, Math.min(1, (t - clip.start) / f, (clip.end - t) / f));
+    setGain(g * g * mult());
+    if (ramp && performance.now() - ramp.t0 >= ramp.ms) {
+      if (ramp.done) { const d = ramp.done; ramp.done = null; d(); }
+      else if (ramp.to >= 1) ramp = null;
+    }
+  }
+  function startTimer() { if (!timer) timer = setInterval(tick, 25); }
+  function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+  function hardStop() { stopTimer(); ramp = null; if (el) el.pause(); if (gain) setGain(0, true); }
+  async function load(k, blob, startSec, clipSec) {
+    ensure(); hardStop(); key = k; set('idle');
+    if (url) URL.revokeObjectURL(url);
+    url = URL.createObjectURL(blob);
+    await new Promise((res, rej) => {
+      const ok = () => { off(); res(); }, bad = () => { off(); rej(new Error('audio')); };
+      const off = () => { el.removeEventListener('loadedmetadata', ok); el.removeEventListener('error', bad); };
+      el.addEventListener('loadedmetadata', ok); el.addEventListener('error', bad);
+      el.src = url;
+    });
+    if (key !== k) return false;
+    const dur = isFinite(el.duration) ? el.duration : 0;
+    const start = Math.min(Math.max(0, +startSec || 0), Math.max(0, dur - 5));
+    const end = clipSec > 0 ? Math.min(dur, start + clipSec) : dur;
+    clip = { start, end };
+    el.currentTime = start;
+    set('ready');
+    return true;
+  }
+  function play() {
+    if (!el || (st !== 'ready' && st !== 'paused')) return;
+    unlock();
+    if (st === 'ready') { el.currentTime = clip.start; ramp = null; }
+    else ramp = { from: 0, to: 1, t0: performance.now(), ms: 350 };
+    setGain(0, true);
+    set('playing'); startTimer();
+    const p = el.play();
+    if (p && p.catch) p.catch(err => { console.warn(err); stopTimer(); ramp = null; set('ready'); });
+  }
+  function pause() {
+    if (st !== 'playing') return;
+    ramp = { from: mult(), to: 0, t0: performance.now(), ms: 350, done() { el.pause(); stopTimer(); set('paused'); } };
+    set('pausing');
+  }
+  function stop(ms) {
+    ms = ms ?? fadeSec() * 1000;
+    if (st === 'playing' || st === 'pausing') { ramp = { from: mult(), to: 0, t0: performance.now(), ms, done: finish }; set('stopping'); }
+    else if (st === 'paused') finish();
+  }
+  function fadeStop(ms) {
+    if (st !== 'playing' && st !== 'pausing' && st !== 'stopping' && st !== 'paused') return Promise.resolve();
+    return new Promise(r => { waiters.push(r); if (st !== 'stopping') stop(ms); });
+  }
+  function finish() {
+    stopTimer(); ramp = null;
+    if (gain) setGain(0, true);
+    if (el) { el.pause(); try { el.currentTime = clip.start; } catch (e) {} }
+    set('ready');
+  }
+  return {
+    unlock, load, play, pause, stop, fadeStop,
+    state: () => st, key: () => key, on: f => subs.add(f),
+    progress() {
+      if (!el || st === 'idle') return { pos: 0, len: 0 };
+      return { pos: Math.max(0, Math.min(clip.end, el.currentTime) - clip.start), len: Math.max(0, clip.end - clip.start) };
+    },
+    freq() { if (!analyser) return null; analyser.getByteFrequencyData(buf); return buf; },
+  };
+})();
+
+/* ---------- visual bits ---------- */
+const buddy = (on = true) => `<svg class="buddy" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="7" r="4.2" fill="${on ? '#7ee03a' : '#c3c6d6'}" stroke="${on ? '#2f6a08' : '#6d7190'}"/><path d="M4 21c0-4.6 3.6-7.6 8-7.6s8 3 8 7.6z" fill="${on ? '#49b8ff' : '#dfe1ea'}" stroke="${on ? '#12508a' : '#6d7190'}"/><circle cx="10.4" cy="5.6" r="1.3" fill="#fff" opacity=".75"/></svg>`;
+const wb = () => `<span class="wb"><i>_</i><i>□</i><i>✕</i></span>`;
+function polaroid(i, rot = 0, pos = '') {
+  const P = CONFIG.PHOTOS;
+  if (!P.length) return `<figure class="pola" style="${pos}--r:${rot}deg"><div class="ph empty"><span>📸</span><small>ваше фото</small></div><figcaption>2000s ✦</figcaption></figure>`;
+  const p = P[((i % P.length) + P.length) % P.length];
+  return `<figure class="pola" style="${pos}--r:${rot}deg"><div class="ph"><img src="${esc(p.src)}" alt=""></div><figcaption>${esc(p.caption || '')}</figcaption></figure>`;
+}
+
+/* ---------- views ---------- */
+const VIEWS = {};
+let setupMsg = null, previewId = null, ampError = null, navBusy = false;
+
+function go(screen) { S.screen = screen; save(); render(); window.scrollTo(0, 0); }
+function render() { const v = VIEWS[S.screen] || VIEWS.title; app.innerHTML = v.html(); v.mount && v.mount(); }
+
+/* ----- title ----- */
+VIEWS.title = {
+  html() {
+    const name = S.settings.bday.trim();
+    const g = S.game;
+    const inProgress = g && !g.finished;
+    return `
+    <section class="screen title-screen">
+      <div class="px hb">★ HAPPY B-DAY${name ? ', ' + esc(name.toUpperCase()) : ''}! ★</div>
+      <h1 class="chrome h1">ВГАДАЙ МЕЛОДІЮ</h1>
+      <div class="chrome h2">2000-х</div>
+      <div class="px sub blink">✦ Y2K PARTY EDITION ✦</div>
+      <div class="xpboot"><i></i><i></i><i></i></div>
+      <div class="hero-btns">
+        ${inProgress
+          ? `<button class="btn big" data-act="resume">▶ ПРОДОВЖИТИ · SONG ${g.idx + 1}</button>`
+          : `<button class="btn big" data-act="start">▶ START</button>`}
+        ${g && g.finished ? `<button class="btn big" data-act="results">★ РЕЗУЛЬТАТИ</button>` : ''}
+        <button class="btn silver" data-act="setup">⚙ Налаштування</button>
+      </div>
+      <div class="px stats">🎵 ${S.songs.length} · 👥 ${S.players.length}</div>
+      <div class="strip">${[-8, 5, -3, 7, -6].map((r, i) => polaroid(i, r)).join('')}</div>
+    </section>`;
+  },
+};
+
+/* ----- setup ----- */
+function songRows() {
+  if (!S.songs.length) return `<li class="empty">Поки порожньо. Додай пісні ☝</li>`;
+  return S.songs.map((s, i) => `
+    <li class="song">
+      <span class="num px">${pad(i + 1)}</span>
+      <input class="sname" data-id="${s.id}" value="${esc(s.title)}" title="${esc(s.file)}" aria-label="Назва пісні">
+      <span class="dur">${fmt(s.dur)}</span>
+      <label class="st">старт з <input class="sstart" type="number" min="0" step="1" data-id="${s.id}" value="${s.start || 0}"> с</label>
+      <button class="ib ${previewId === s.id ? 'on' : ''}" data-act="preview" data-id="${s.id}" title="Прослухати">${previewId === s.id ? '■' : '▶'}</button>
+      <button class="ib" data-act="up" data-id="${s.id}" ${i === 0 ? 'disabled' : ''} title="Вище">↑</button>
+      <button class="ib" data-act="down" data-id="${s.id}" ${i === S.songs.length - 1 ? 'disabled' : ''} title="Нижче">↓</button>
+      <button class="ib del" data-act="delSong" data-id="${s.id}" title="Видалити">✕</button>
+    </li>`).join('');
+}
+VIEWS.setup = {
+  html() {
+    const s = S.settings;
+    const clipOpts = [[0, 'весь трек'], [15, '15 сек'], [20, '20 сек'], [30, '30 сек'], [45, '45 сек'], [60, '1 хв'], [90, '1.5 хв']];
+    return `
+    <section class="screen">
+      <div class="topbar"><button class="linkbtn" data-act="home">◀ МЕНЮ</button><div class="px dim">SETUP.EXE</div></div>
+
+      <div class="win"><div class="win-t"><span class="ttl">🎂 party.exe</span>${wb()}</div>
+        <div class="win-b"><label class="fld"><span>Ім’я іменинниці (для заголовка)</span>
+          <input id="bday" type="text" maxlength="30" value="${esc(s.bday)}" placeholder="наприклад, Оля"></label></div></div>
+
+      <div class="win"><div class="win-t"><span class="ttl">🎵 Мелодії (${S.songs.length})</span>${wb()}</div>
+        <div class="win-b">
+          <label class="drop" id="drop">
+            <input id="fileIn" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.aac,.flac" multiple hidden>
+            <div class="drop-ic">💿</div>
+            <div><b>Перетягни сюди mp3 / m4a / wav</b><br><span>або натисни, щоб вибрати файли</span></div>
+          </label>
+          <div class="note">🔒 Назви файлів видно тільки тут. У грі буде просто <b>Song 1, Song 2...</b></div>
+          ${Store.persistent ? '' : `<div class="note warn">⚠ Цей браузер не зберігає файли. Якщо сторінка перезавантажиться, пісні треба буде додати знову. Краще відкрити в Chrome.</div>`}
+          ${setupMsg ? `<div class="note ${setupMsg.warn ? 'warn' : ''}">${esc(setupMsg.text)}</div>` : ''}
+          <ol class="songs" id="songs">${songRows()}</ol>
+          <div class="row gap">
+            ${S.songs.length > 1 ? `<button class="btn sm silver" data-act="shuffle">🔀 Перемішати</button>` : ''}
+            ${S.songs.length ? `<button class="btn sm silver" data-act="clearSongs">🗑 Видалити всі</button>` : ''}
+          </div>
+        </div></div>
+
+      <div class="win"><div class="win-t"><span class="ttl">⚙ Налаштування гри</span>${wb()}</div>
+        <div class="win-b grid2">
+          <label class="fld"><span>Скільки грає кожна пісня</span>
+            <select id="clipSec">${clipOpts.map(([v, l]) => `<option value="${v}" ${+s.clipSec === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+          <div class="fld"><span>Затухання</span><div class="info">✓ ${CONFIG.FADE_SEC} сек на початку і ${CONFIG.FADE_SEC} сек у кінці</div></div>
+          <label class="chk"><input id="showAnswer" type="checkbox" ${s.showAnswer ? 'checked' : ''}>
+            <span>Показувати ведучій кнопку «👁 Відповідь» у раунді (назва пісні з’явиться тільки після натискання)</span></label>
+        </div></div>
+
+      <div class="foot">
+        <button class="btn silver" data-act="home">◀ Меню</button>
+        <button class="btn big" data-act="toPlayers" ${S.songs.length ? '' : 'disabled'}>ДАЛІ: ГРАВЦІ ▶</button>
+      </div>
+    </section>`;
+  },
+  mount() {
+    $('#bday').addEventListener('input', e => { S.settings.bday = e.target.value; save(); });
+    $('#clipSec').addEventListener('change', e => { S.settings.clipSec = +e.target.value; save(); });
+    $('#showAnswer').addEventListener('change', e => { S.settings.showAnswer = e.target.checked; save(); });
+    const fi = $('#fileIn');
+    fi.addEventListener('change', () => { addFiles(fi.files); fi.value = ''; });
+    const d = $('#drop');
+    ['dragenter', 'dragover'].forEach(t => d.addEventListener(t, () => d.classList.add('over')));
+    ['dragleave', 'drop'].forEach(t => d.addEventListener(t, () => d.classList.remove('over')));
+    $('#songs').addEventListener('input', e => {
+      const s = songById(e.target.dataset.id); if (!s) return;
+      if (e.target.classList.contains('sname')) s.title = e.target.value;
+      if (e.target.classList.contains('sstart')) s.start = Math.max(0, Math.floor(+e.target.value || 0));
+      save();
+    });
+  },
+};
+function probeDuration(blob) {
+  return new Promise(res => {
+    const a = new Audio(); const u = URL.createObjectURL(blob); let done = false;
+    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(u); a.removeAttribute('src'); res(v); };
+    a.preload = 'metadata';
+    a.onloadedmetadata = () => fin(isFinite(a.duration) ? a.duration : 0);
+    a.onerror = () => fin(0);
+    setTimeout(() => fin(0), 10000);
+    a.src = u;
+  });
+}
+async function addFiles(files) {
+  const list = [...files].filter(f => (f.type || '').startsWith('audio/') || /\.(mp3|m4a|aac|wav|ogg|oga|flac|opus|webm)$/i.test(f.name));
+  if (!list.length) { setupMsg = { text: 'Це не схоже на аудіо 🤔 Потрібні mp3 / m4a / wav.', warn: true }; render(); return; }
+  const bad = []; let added = 0;
+  for (const f of list) {
+    setupMsg = { text: `💿 Додаю ${added + bad.length + 1} з ${list.length}...` }; render();
+    const dur = await probeDuration(f);
+    if (!dur) { bad.push(f.name); continue; }
+    const id = uid();
+    await Store.put('song:' + id, f);
+    S.songs.push({ id, file: f.name, title: f.name.replace(/\.[^.]+$/, '').replace(/_+/g, ' ').trim(), dur, start: 0 });
+    added++; save();
+  }
+  setupMsg = bad.length
+    ? { text: `Додано: ${added}. Не вдалося відкрити: ${bad.join(', ')}`, warn: true }
+    : { text: `✓ Додано пісень: ${added}` };
+  render();
+}
+
+/* ----- players ----- */
+VIEWS.players = {
+  html() {
+    return `
+    <section class="screen">
+      <div class="topbar"><button class="linkbtn" data-act="setup">◀ МЕЛОДІЇ</button><div class="px dim">MSN MESSENGER</div></div>
+      <div class="win"><div class="win-t"><span class="ttl">👥 MSN Messenger - Гравці</span>${wb()}</div>
+        <div class="win-b">
+          <div class="msn-head">${buddy(true)}<div><b>Хто грає?</b><div class="dim2">● Online (${S.players.length})</div></div></div>
+          <form class="addp" id="addForm"><input id="pname" maxlength="24" placeholder="Ім’я гравця" autocomplete="off"><button class="btn" type="submit">+ Додати</button></form>
+          <div class="plist">${S.players.map(p => `<span class="chip y static">${buddy(true)}<span>${esc(p.name)}</span><button class="x" data-act="delPlayer" data-pid="${p.id}" aria-label="Видалити">✕</button></span>`).join('') || '<div class="empty-s">Додай першого гравця ☝</div>'}</div>
+        </div></div>
+      <div class="foot">
+        <button class="btn silver" data-act="setup">◀ Мелодії</button>
+        <button class="btn big" data-act="startGame" ${S.players.length && S.songs.length ? '' : 'disabled'}>🎮 ПОЧАТИ ГРУ</button>
+      </div>
+    </section>`;
+  },
+  mount() {
+    $('#addForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const v = $('#pname').value.trim(); if (!v) return;
+      S.players.push({ id: uid(), name: v }); save(); render(); $('#pname').focus();
+    });
+    if (matchMedia('(pointer:fine)').matches) $('#pname').focus();
+  },
+};
+
+/* ----- round ----- */
+function ensureRound(i) {
+  const g = S.game;
+  if (!g.rounds[i]) { g.rounds[i] = { participants: S.players.map(p => p.id), knew: [], played: false }; save(); }
+  return g.rounds[i];
+}
+function sidesHtml(r) {
+  const knew = new Set(r.knew);
+  const ps = S.players.filter(p => r.participants.includes(p.id));
+  const yes = ps.filter(p => knew.has(p.id)), no = ps.filter(p => !knew.has(p.id));
+  const chip = (p, y) => `<button class="chip ${y ? 'y' : ''}" data-act="toggle" data-pid="${p.id}">${buddy(y)}<span>${esc(p.name)}</span></button>`;
+  return `
+    <div class="win side yes"><div class="win-t"><span class="ttl">✓ ЗНАЮ (${yes.length})</span></div>
+      <div class="win-b">${yes.map(p => chip(p, true)).join('') || '<div class="empty-s">тапни ім’я, щоб перекинути сюди</div>'}</div></div>
+    <div class="win side no"><div class="win-t"><span class="ttl">✗ НЕ ЗНАЮ (${no.length})</span></div>
+      <div class="win-b">${no.map(p => chip(p, false)).join('') || '<div class="empty-s">всі знають! 🔥</div>'}</div></div>`;
+}
+function ampHtml(i) {
+  const bday = S.settings.bday.trim();
+  const marquee = `*** SONG ${i + 1} *** ЗНАЄШ? НАЛІВО ✓ *** НЕ ЗНАЄШ? НАПРАВО ✗ ***${bday ? ` HAPPY B-DAY, ${esc(bday.toUpperCase())}! ***` : ''}`;
+  return `
+    <div class="amp">
+      <div class="amp-t"><span>♫ MELODY PLAYER 2000</span><span class="grip"></span><span>_ □ ✕</span></div>
+      <div class="amp-body">
+        <div class="lcd">
+          <div class="lcd-time" id="lcdTime">00:00</div>
+          <div class="lcd-r">
+            <div class="marq"><span>${marquee}</span></div>
+            <div class="lcd-meta"><span>128 KBPS</span><span>44 KHZ</span><span>STEREO</span><b id="lcdState">LOAD</b></div>
+          </div>
+        </div>
+        <canvas class="viz" id="viz"></canvas>
+        <div class="seek"><i id="seekFill"></i></div>
+        <div class="amp-ctrls">
+          <button class="rb play" id="btnPlay" data-act="playToggle" disabled aria-label="Грати або пауза">▶</button>
+          <button class="rb" data-act="stopSong" title="Стоп (з затуханням)" aria-label="Стоп">■</button>
+          <div class="amp-msg px" id="ampMsg">завантаження...</div>
+        </div>
+        <div class="reveal hide" id="reveal"></div>
+      </div>
+    </div>`;
+}
+VIEWS.round = {
+  html() {
+    const g = S.game;
+    const n = g.order.length, i = g.idx, r = ensureRound(i), last = i === n - 1;
+    return `
+    <section class="screen">
+      <div class="topbar">
+        <button class="linkbtn" data-act="home">⌂ МЕНЮ</button>
+        <button class="linkbtn" data-act="endEarly">⏹ ЗАВЕРШИТИ ГРУ</button>
+      </div>
+      <div class="round-head"><div class="chrome songno">SONG ${i + 1}</div><div class="px of">/ ${n}</div></div>
+      ${ampHtml(i)}
+      <div class="hint px"><span>« ЗНАЄШ? СЮДИ</span><span>НЕ ЗНАЄШ? СЮДИ »</span></div>
+      <div class="sides" id="sides">${sidesHtml(r)}</div>
+      <div class="foot">
+        <div class="row gap">
+          ${i > 0 ? `<button class="btn silver" data-act="prev">◀ Назад</button>` : ''}
+          <button class="btn silver" data-act="addPlayer">👤 + Гравець</button>
+          ${S.settings.showAnswer ? `<button class="btn silver" data-act="reveal">👁 Відповідь</button>` : ''}
+        </div>
+        <button class="btn big" data-act="next">${last ? '★ ФІНАЛ' : `ДАЛІ: SONG ${i + 2} ▶`}</button>
+      </div>
+    </section>`;
+  },
+  async mount() {
+    Viz.attach($('#viz'));
+    ampError = null;
+    const i = S.game.idx, song = songById(S.game.order[i]);
+    if (!song) { ampError = '⚠ цю пісню видалено'; return; }
+    const k = `round:${i}:${song.id}:${song.start || 0}:${S.settings.clipSec}`;
+    if (Audio2k.key() === k && Audio2k.state() !== 'idle') return;
+    const blob = await Store.get('song:' + song.id);
+    if (!blob) { ampError = '⚠ файл не знайдено, додай знову в налаштуваннях'; return; }
+    try { await Audio2k.load(k, blob, song.start, +S.settings.clipSec); }
+    catch (e) { ampError = '⚠ не вдалося відкрити файл'; }
+  },
+};
+function ampTick() {
+  const t = $('#lcdTime'); if (!t) return;
+  const st = Audio2k.state(), pr = Audio2k.progress();
+  setText(t, fmt(pr.pos));
+  const f = $('#seekFill'); if (f) f.style.width = (pr.len ? Math.min(100, pr.pos / pr.len * 100) : 0) + '%';
+  setText($('#lcdState'), { playing: 'PLAY', pausing: 'PAUSE', paused: 'PAUSE', stopping: 'FADE', ready: 'STOP', idle: 'LOAD' }[st] || '');
+  const b = $('#btnPlay');
+  if (b) {
+    b.disabled = !!ampError || !(st === 'ready' || st === 'paused' || st === 'playing');
+    setText(b, st === 'playing' ? '❚❚' : '▶');
+    b.classList.toggle('on', st === 'playing');
+  }
+  const r = S.game && S.game.rounds[S.game.idx];
+  const msg = ampError || {
+    idle: 'завантаження...', playing: '♪ ♫ ♪ ♫', pausing: 'пауза...', paused: 'пауза', stopping: 'затухання...',
+    ready: r && r.played ? '▶ ще раз' : 'натисни ▶ або ПРОБІЛ',
+  }[st];
+  setText($('#ampMsg'), msg);
+}
+
+/* ----- results ----- */
+function computeResults() {
+  const rounds = Object.values(S.game ? S.game.rounds : {}).filter(r => r.played || r.knew.length);
+  const res = S.players.map(p => {
+    let tot = 0, k = 0;
+    rounds.forEach(r => { if (r.participants.includes(p.id)) { tot++; if (r.knew.includes(p.id)) k++; } });
+    return { p, tot, k, pct: tot ? Math.round(100 * k / tot) : 0 };
+  }).sort((a, b) => b.pct - a.pct || b.k - a.k || a.p.name.localeCompare(b.p.name, 'uk'));
+  const levels = [...new Set(res.map(r => r.pct))];
+  res.forEach(r => { r.place = levels.indexOf(r.pct) + 1; });
+  return { res, rounds: rounds.length };
+}
+const titleFor = p => p >= 100 ? '👑 Легенда 2000-х' : p >= 80 ? '💿 Живе на MTV' : p >= 60 ? '📼 Касета з хітами' : p >= 40 ? '📱 Nokia 3310 в кишені' : p >= 20 ? '🎧 Трохи з 2000-х' : '🚀 Гість з майбутнього';
+function podHtml(group, place) {
+  const names = group.map(r => esc(r.p.name)).join('<br>') || '<span class="dim2">-</span>';
+  return `<div class="pod p${place}"><div class="who">${place === 1 ? '<div class="crown">👑</div>' : ''}<div class="pnames">${names}</div><div class="ppct">${group[0] ? group[0].pct + '%' : ''}</div></div><div class="blk"><span>${place}</span></div></div>`;
+}
+VIEWS.results = {
+  html() {
+    const { res, rounds } = computeResults();
+    const g = [1, 2, 3].map(pl => res.filter(r => r.place === pl));
+    return `
+    <section class="screen">
+      <div class="topbar"><button class="linkbtn" data-act="home">⌂ МЕНЮ</button><div class="px dim">RESULTS.EXE</div></div>
+      <div class="res-head">
+        <div class="px hb">★ ЗІГРАНО ПІСЕНЬ: ${rounds} ★</div>
+        <h1 class="chrome h1">ХТО НАЙБІЛЬШЕ<br>З 2000-Х?</h1>
+      </div>
+      ${rounds ? `<div class="podium">${podHtml(g[1], 2)}${podHtml(g[0], 1)}${podHtml(g[2], 3)}</div>` : `<p class="px" style="text-align:center;margin:40px 0">Жодної пісні ще не зіграли 🤷</p>`}
+      <div class="win rank-win" id="rankWin"><div class="win-t"><span class="ttl">📊 На скільки % ти з 2000-х</span>${wb()}</div>
+        <div class="win-b">${res.map(r => `
+          <div class="rrow ${r.place <= 3 ? 'top' : ''}">
+            <span class="rpl px">${r.place}</span>
+            <span class="rname">${esc(r.p.name)}</span>
+            <span class="rbar"><i style="width:${r.pct}%"></i></span>
+            <span class="rpct">${r.pct}%</span>
+            <span class="rsc dim2">${r.k}/${r.tot}</span>
+            <span class="rtt">${titleFor(r.pct)}</span>
+          </div>`).join('') || '<div class="empty-s">Немає гравців</div>'}</div></div>
+      <div class="foot">
+        <button class="btn silver" data-act="home">⌂ Меню</button>
+        <button class="btn big" data-act="again">↺ Нова гра</button>
+      </div>
+    </section>`;
+  },
+  mount() {
+    (Overlay.current || Promise.resolve()).then(async () => {
+      if (S.screen !== 'results') return;
+      for (const [sel, ms] of [['.p3', 300], ['.p2', 1000], ['.p1', 1200]]) {
+        await sleep(ms); const el = $(sel); if (el) el.classList.add('show');
+      }
+      if ($('.p1')) confetti(5500);
+      await sleep(900); const rw = $('#rankWin'); if (rw) rw.classList.add('show');
+    });
+  },
+};
+
+/* ---------- overlays & dialogs ---------- */
+const Overlay = {
+  current: null,
+  show(html, ms) {
+    const o = document.createElement('div'); o.className = 'ovl'; o.innerHTML = html;
+    document.body.appendChild(o);
+    this.current = new Promise(res => {
+      let done = false;
+      const close = () => { if (done) return; done = true; o.classList.add('out'); setTimeout(() => { o.remove(); res(); }, 280); };
+      o.addEventListener('click', close);
+      setTimeout(close, ms);
+    }).then(() => { this.current = null; });
+    return this.current;
+  },
+  song(i) {
+    return this.show(`<div class="win"><div class="win-t"><span class="ttl">💿 Завантаження...</span>${wb()}</div>
+      <div class="win-b dark intro-b">${polaroid(i + 3, -5)}
+        <div class="intro-txt"><div class="chrome intro-no">SONG ${i + 1}</div><div class="px blink">приготуйтесь... 🎧</div><div class="xpfill"><i></i></div></div>
+      </div></div>`, 2500);
+  },
+  gameOver() {
+    return this.show(`<div class="win"><div class="win-t"><span class="ttl">🏆 results.exe</span>${wb()}</div>
+      <div class="win-b dark go-b"><div class="chrome go-t">GAME OVER</div><div class="px blink" style="margin:14px 0;color:#9fe8ff">рахуємо бали...</div><div class="xpfill"><i></i></div></div></div>`, 2600);
+  },
+};
+function modal({ title, text, input, ok = 'OK', cancel = 'Скасувати' }) {
+  return new Promise(res => {
+    const m = document.createElement('div'); m.className = 'modal';
+    m.innerHTML = `<div class="win"><div class="win-t"><span class="ttl">${esc(title)}</span>${wb()}</div><div class="win-b">
+      <div class="dlg-row"><div class="dlg-ic">💬</div><div>${esc(text)}</div></div>
+      ${input ? `<input class="dlg-in" maxlength="24" placeholder="${esc(input)}">` : ''}
+      <div class="dlg-btns"><button class="btn sm silver" data-r="0">${esc(cancel)}</button><button class="btn sm" data-r="1">${esc(ok)}</button></div></div></div>`;
+    document.body.appendChild(m);
+    const inp = $('.dlg-in', m); if (inp) setTimeout(() => inp.focus(), 30);
+    const close = v => { m.remove(); res(v); };
+    m.addEventListener('click', e => {
+      const b = e.target.closest('[data-r]');
+      if (b) close(b.dataset.r === '1' ? (inp ? inp.value.trim() : true) : (inp ? null : false));
+      else if (e.target === m) close(inp ? null : false);
+    });
+    (inp || m).addEventListener('keydown', e => {
+      if (e.key === 'Enter' && inp) close(inp.value.trim());
+      if (e.key === 'Escape') close(inp ? null : false);
+    });
+  });
+}
+
+/* ---------- navigation ---------- */
+async function gotoRound(n, intro) {
+  if (navBusy) return; navBusy = true;
+  try {
+    const fading = Audio2k.fadeStop(intro ? CONFIG.FADE_SEC * 1000 : 600);
+    const ov = intro ? Overlay.song(n) : null;
+    await fading;
+    S.game.idx = n; S.screen = 'round'; save(); render(); window.scrollTo(0, 0);
+    if (ov) await ov;
+  } finally { navBusy = false; }
+}
+async function finishGame() {
+  if (navBusy) return; navBusy = true;
+  try {
+    const f = Audio2k.fadeStop();
+    const ov = Overlay.gameOver();
+    await f;
+    S.game.finished = true; S.screen = 'results'; save(); render(); window.scrollTo(0, 0);
+    await ov;
+  } finally { navBusy = false; }
+}
+
+/* ---------- actions ---------- */
+const ACTS = {
+  async home() { await Audio2k.fadeStop(600); previewId = null; go('title'); },
+  setup() { setupMsg = null; go('setup'); },
+  start() { go(S.songs.length ? 'players' : 'setup'); },
+  resume() { go('round'); },
+  results() { go('results'); },
+  toPlayers() { Audio2k.stop(600); go('players'); },
+  again() { go('players'); },
+
+  async preview(b) {
+    const id = b.dataset.id;
+    if (previewId === id) { Audio2k.stop(); return; }
+    await Audio2k.fadeStop(300);
+    const s = songById(id); const blob = s && await Store.get('song:' + id);
+    if (!blob) { setupMsg = { text: 'Файл не знайдено 🤔 Видали і додай його знову.', warn: true }; render(); return; }
+    try { await Audio2k.load(`prev:${id}:${s.start || 0}:${S.settings.clipSec}`, blob, s.start, +S.settings.clipSec); }
+    catch (e) { setupMsg = { text: 'Не вдалося відкрити файл', warn: true }; render(); return; }
+    previewId = id; refreshPreviewBtns(); Audio2k.play();
+  },
+  up(b) { moveSong(b.dataset.id, -1); },
+  down(b) { moveSong(b.dataset.id, 1); },
+  async delSong(b) {
+    const id = b.dataset.id;
+    if (previewId === id) { await Audio2k.fadeStop(300); }
+    S.songs = S.songs.filter(s => s.id !== id); save(); await Store.del('song:' + id);
+    setupMsg = null; render();
+  },
+  shuffle() {
+    for (let i = S.songs.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [S.songs[i], S.songs[j]] = [S.songs[j], S.songs[i]]; }
+    save(); setupMsg = { text: '🔀 Перемішано!' }; render();
+  },
+  async clearSongs() {
+    if (!await modal({ title: 'Видалити всі?', text: `Видалити всі ${S.songs.length} пісень зі списку?`, ok: 'Видалити' })) return;
+    await Audio2k.fadeStop(300);
+    for (const s of S.songs) await Store.del('song:' + s.id);
+    S.songs = []; save(); setupMsg = null; render();
+  },
+
+  delPlayer(b) { S.players = S.players.filter(p => p.id !== b.dataset.pid); save(); render(); },
+  async startGame() {
+    const g = S.game;
+    if (g && !g.finished && Object.values(g.rounds).some(r => r.played || r.knew.length)) {
+      if (!await modal({ title: 'Нова гра?', text: 'Попередня гра ще не закінчена. Почати заново? Її відмітки зітруться.', ok: 'Так, заново' })) return;
+    }
+    S.game = { order: S.songs.map(s => s.id), idx: 0, rounds: {}, finished: false };
+    save();
+    gotoRound(0, true);
+  },
+
+  playToggle() {
+    const st = Audio2k.state();
+    if (st === 'playing') Audio2k.pause();
+    else if (st === 'ready' || st === 'paused') {
+      Audio2k.play();
+      const r = S.game && S.game.rounds[S.game.idx];
+      if (r && !r.played) { r.played = true; save(); }
+    }
+  },
+  stopSong() { Audio2k.stop(); },
+  toggle(b) {
+    const r = S.game.rounds[S.game.idx]; const id = b.dataset.pid;
+    const k = r.knew.indexOf(id);
+    if (k >= 0) r.knew.splice(k, 1); else r.knew.push(id);
+    save();
+    $('#sides').innerHTML = sidesHtml(r);
+    const moved = $(`#sides [data-pid="${id}"]`); if (moved) moved.classList.add('pop');
+  },
+  async addPlayer() {
+    const name = await modal({ title: 'Новий гравець', text: 'Хто приєднався до гри?', input: 'Ім’я', ok: 'Додати' });
+    if (!name) return;
+    const p = { id: uid(), name }; S.players.push(p);
+    const r = S.game.rounds[S.game.idx]; if (r) r.participants.push(p.id);
+    save(); $('#sides').innerHTML = sidesHtml(r);
+  },
+  reveal() {
+    const el = $('#reveal'); const s = songById(S.game.order[S.game.idx]);
+    if (!el.classList.contains('hide')) { el.classList.add('hide'); el.textContent = ''; return; }
+    el.textContent = '🎵 ' + (s ? s.title : '?'); el.classList.remove('hide');
+  },
+  prev() { gotoRound(S.game.idx - 1, false); },
+  next() { S.game.idx >= S.game.order.length - 1 ? finishGame() : gotoRound(S.game.idx + 1, true); },
+  async endEarly() {
+    if (!await modal({ title: 'Завершити гру?', text: 'Завершити зараз і показати результати за зіграні пісні?', ok: 'Так, до фіналу' })) return;
+    finishGame();
+  },
+};
+function moveSong(id, d) {
+  const i = S.songs.findIndex(s => s.id === id), j = i + d;
+  if (i < 0 || j < 0 || j >= S.songs.length) return;
+  [S.songs[i], S.songs[j]] = [S.songs[j], S.songs[i]]; save(); render();
+}
+function refreshPreviewBtns() {
+  $$('[data-act="preview"]').forEach(b => { const on = b.dataset.id === previewId; b.classList.toggle('on', on); b.textContent = on ? '■' : '▶'; });
+}
+Audio2k.on(st => { if (st === 'ready' && previewId && S.screen === 'setup') { previewId = null; refreshPreviewBtns(); } });
+
+/* ---------- events ---------- */
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  Audio2k.unlock();
+  const fn = ACTS[b.dataset.act]; if (fn) fn(b, e);
+});
+document.addEventListener('pointerdown', () => Audio2k.unlock(), { passive: true });
+addEventListener('keydown', e => {
+  if (e.code !== 'Space' || S.screen !== 'round' || document.querySelector('.modal')) return;
+  const tag = (document.activeElement || {}).tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  e.preventDefault(); ACTS.playToggle();
+});
+['dragover', 'drop'].forEach(t => addEventListener(t, e => {
+  e.preventDefault();
+  if (t === 'drop' && S.screen === 'setup' && e.dataTransfer && e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+}));
+
+/* ---------- visualizer (Winamp spectrum) ---------- */
+const Viz = (() => {
+  let cv = null, cx = null; const N = 32; const bars = new Array(N).fill(0), peaks = new Array(N).fill(0);
+  function attach(c) { cv = c; if (!cv) return; cx = cv.getContext('2d'); size(); }
+  function size() {
+    if (!cv) return; const r = cv.getBoundingClientRect(); const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.max(10, Math.round(r.width * dpr)); cv.height = Math.max(10, Math.round(r.height * dpr));
+  }
+  function draw() {
+    const W = cv.width, H = cv.height; cx.clearRect(0, 0, W, H);
+    const st = Audio2k.state();
+    const data = (st === 'playing' || st === 'pausing' || st === 'stopping') ? Audio2k.freq() : null;
+    for (let i = 0; i < N; i++) {
+      let v = 0;
+      if (data) { const idx = 1 + Math.floor(Math.pow(i / N, 1.7) * (data.length * 0.8)); v = data[idx] / 255; }
+      bars[i] = Math.max(v, bars[i] * 0.88);
+      peaks[i] = Math.max(bars[i], peaks[i] - 0.01);
+    }
+    const gap = W / N * 0.24, bw = W / N - gap, seg = Math.max(4, H / 20);
+    const grd = cx.createLinearGradient(0, H, 0, 0);
+    grd.addColorStop(0, '#4b1dc8'); grd.addColorStop(.55, '#8a5cff'); grd.addColorStop(.85, '#49d6ff'); grd.addColorStop(1, '#e6fbff');
+    for (let i = 0; i < N; i++) {
+      const x = i * (bw + gap) + gap / 2, h = bars[i] * H;
+      cx.fillStyle = 'rgba(138,92,255,.12)'; cx.fillRect(x, H - seg + 2, bw, seg - 2);
+      cx.fillStyle = grd;
+      for (let y = H; y > H - h; y -= seg) cx.fillRect(x, y - seg + 2, bw, seg - 2);
+      if (peaks[i] > 0.02) { cx.fillStyle = '#ffffff'; cx.fillRect(x, H - peaks[i] * H - 3, bw, 3); }
+    }
+  }
+  (function loop() {
+    requestAnimationFrame(loop);
+    if (cv && cv.isConnected) draw();
+    ampTick();
+  })();
+  addEventListener('resize', size);
+  return { attach };
+})();
+
+/* ---------- confetti ---------- */
+function confetti(ms = 5000) {
+  const c = document.createElement('canvas'); c.className = 'confetti'; document.body.appendChild(c);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const W = c.width = innerWidth * dpr, H = c.height = innerHeight * dpr, x = c.getContext('2d');
+  const cols = ['#8a5cff', '#c3a8ff', '#6a35f0', '#49d6ff', '#ffffff', '#ffd54a', '#9be83a'];
+  const P = Array.from({ length: 170 }, () => ({
+    x: Math.random() * W, y: -Math.random() * H * 0.7, vx: (Math.random() - .5) * 2 * dpr, vy: (2 + Math.random() * 3) * dpr,
+    r: (4 + Math.random() * 6) * dpr, a: Math.random() * 6, va: (Math.random() - .5) * .2,
+    c: cols[Math.random() * cols.length | 0], star: Math.random() < .35,
+  }));
+  const t0 = performance.now();
+  (function f(t) {
+    const el = t - t0; x.clearRect(0, 0, W, H);
+    x.globalAlpha = el > ms - 900 ? Math.max(0, (ms - el) / 900) : 1;
+    P.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.a += p.va;
+      if (p.y > H + 20 && el < ms - 1800) { p.y = -20; p.x = Math.random() * W; }
+      x.save(); x.translate(p.x, p.y); x.rotate(p.a); x.fillStyle = p.c;
+      if (p.star) { x.font = `${p.r * 2.6}px sans-serif`; x.fillText('✦', -p.r, p.r); }
+      else x.fillRect(-p.r / 2, -p.r * .6, p.r, p.r * 1.2);
+      x.restore();
+    });
+    if (el < ms) requestAnimationFrame(f); else c.remove();
+  })(t0);
+}
+
+/* ---------- decor: stars, cursor sparkles, side photos ---------- */
+(function stars() {
+  let h = '';
+  for (let i = 0; i < 70; i++) {
+    const x = (Math.random() * 100).toFixed(2), y = (Math.random() * 100).toFixed(2), s = (Math.random() * 2 + 1).toFixed(1);
+    const d = (Math.random() * 4).toFixed(2), du = (2 + Math.random() * 3).toFixed(2);
+    h += Math.random() < .12
+      ? `<b style="left:${x}%;top:${y}%;animation-delay:${d}s;animation-duration:${du}s">✦</b>`
+      : `<i style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;animation-delay:${d}s;animation-duration:${du}s"></i>`;
+  }
+  $('#stars').innerHTML = h;
+})();
+(function trail() {
+  if (!matchMedia('(pointer:fine)').matches) return;
+  let last = 0; const cols = ['#c3a8ff', '#8a5cff', '#49d6ff', '#ffffff', '#ffd54a'];
+  addEventListener('pointermove', e => {
+    const t = performance.now(); if (t - last < 40) return; last = t;
+    const s = document.createElement('span'); s.className = 'spark'; s.textContent = Math.random() < .5 ? '✦' : '✧';
+    s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px';
+    s.style.color = cols[Math.random() * cols.length | 0]; s.style.fontSize = (10 + Math.random() * 10) + 'px';
+    document.body.appendChild(s); setTimeout(() => s.remove(), 820);
+  });
+})();
+(function deco() {
+  const spots = [['left:26px;top:14vh', -7], ['left:40px;top:56vh', 5], ['right:26px;top:18vh', 6], ['right:38px;top:60vh', -4]];
+  $('#deco').innerHTML = spots.map(([pos, r], i) => polaroid(i + 5, r, pos + ';')).join('');
+})();
+
+/* ---------- boot ---------- */
+if ((S.screen === 'round' || S.screen === 'results') && !S.game) S.screen = 'title';
+Store.probe().then(() => { try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {} render(); });
+</script>
+</body>
+</html>
