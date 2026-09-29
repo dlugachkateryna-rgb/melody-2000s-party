@@ -399,6 +399,8 @@ const CONFIG = {
   BDAY_NAME: 'Роксолана',   // ім'я за замовчуванням (можна змінити в налаштуваннях гри)
   FADE_SEC: 2,              // затухання на початку і в кінці кожної пісні, сек
   VIDEO_KBPS: 160,          // якість mp3, який гра робить із відео
+  DRIVE_FOLDER: 'https://drive.google.com/drive/folders/1OLJ_InETKTPLoSFsH7GAdx4KIXESMbhp',   // папка з піснями
+  GOOGLE_API_KEY: '',       // ключ Google: тільки читання Drive і тільки з адреси гри
 };
 
 /* ---------- helpers ---------- */
@@ -415,7 +417,7 @@ const app = $('#app');
 
 /* ---------- state (localStorage) ---------- */
 const LS_KEY = 'y2k-melody-v1';
-const defaults = () => ({ screen: 'title', settings: { bday: CONFIG.BDAY_NAME, clipSec: 30, showAnswer: false }, songs: [], players: [], game: null });
+const defaults = () => ({ screen: 'title', settings: { bday: CONFIG.BDAY_NAME, clipSec: 30, showAnswer: false, driveUrl: CONFIG.DRIVE_FOLDER }, songs: [], players: [], game: null });
 let S = loadState();
 function loadState() {
   try {
@@ -734,7 +736,7 @@ function songRows() {
     <li class="song">
       <span class="num px">${pad(i + 1)}</span>
       <input class="sname" data-id="${s.id}" value="${esc(s.title)}" title="${esc(s.file)}" aria-label="Назва пісні">
-      <span class="dur">${fmt(s.dur)}${s.fromVideo ? '<small>🎬 з відео</small>' : ''}</span>
+      <span class="dur">${fmt(s.dur)}${s.driveId || s.fromVideo ? `<small>${s.driveId ? '☁️' : ''}${s.fromVideo ? '🎬' : ''} ${s.driveId ? 'з Drive' : 'з відео'}</small>` : ''}</span>
       <label class="st">старт з <input class="sstart" type="number" min="0" step="1" data-id="${s.id}" value="${s.start || 0}"> с</label>
       <button class="ib ${previewId === s.id ? 'on' : ''}" data-act="preview" data-id="${s.id}" title="Прослухати">${previewId === s.id ? '■' : '▶'}</button>
       <button class="ib del" data-act="delSong" data-id="${s.id}" title="Видалити">✕</button>
@@ -751,6 +753,14 @@ VIEWS.setup = {
       <div class="win"><div class="win-t"><span class="ttl">🎂 party.exe</span>${wb()}</div>
         <div class="win-b"><label class="fld"><span>Ім’я іменинниці (для заголовка)</span>
           <input id="bday" type="text" maxlength="30" value="${esc(s.bday)}" placeholder="наприклад, Роксолана"></label></div></div>
+
+      <div class="win"><div class="win-t"><span class="ttl">☁️ Пісні з Google Drive</span>${wb()}</div>
+        <div class="win-b">
+          <label class="fld"><span>Посилання на папку з піснями</span>
+            <input id="driveUrl" type="url" value="${esc(s.driveUrl || '')}" placeholder="https://drive.google.com/drive/folders/..."></label>
+          <div class="row gap" style="margin-top:12px"><button class="btn" data-act="syncDrive" ${busyAdding ? 'disabled' : ''}>☁️ Завантажити пісні з папки</button></div>
+          <div class="note">Кидай у папку mp3 або відео, а тут тисни кнопку. Нові пісні докачаються, ті, що вже є, пропускаються. Папка має бути відкрита: «Усі, хто має посилання».</div>
+        </div></div>
 
       <div class="win"><div class="win-t"><span class="ttl">🎵 Пісні (${S.songs.length})</span>${wb()}</div>
         <div class="win-b">
@@ -791,6 +801,7 @@ VIEWS.setup = {
   },
   mount() {
     $('#bday').addEventListener('input', e => { S.settings.bday = e.target.value; save(); });
+    $('#driveUrl').addEventListener('input', e => { S.settings.driveUrl = e.target.value.trim(); save(); });
     $('#clipSec').addEventListener('change', e => { S.settings.clipSec = +e.target.value; save(); });
     $('#showAnswer').addEventListener('change', e => { S.settings.showAnswer = e.target.checked; save(); });
     const fi = $('#fileIn');
@@ -819,13 +830,39 @@ function probeDuration(blob) {
     a.src = u;
   });
 }
+/* ---------- пісні з папки Google Drive ---------- */
+function driveFolderId(url) {
+  const u = String(url || '').trim();
+  const m = u.match(/folders\/([\w-]{10,})/) || u.match(/[?&]id=([\w-]{10,})/);
+  return m ? m[1] : (/^[\w-]{20,}$/.test(u) ? u : null);
+}
+async function driveList(folderId) {
+  const files = []; let page = '';
+  do {
+    const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,name,mimeType,size)&pageSize=1000&supportsAllDrives=true&includeItemsFromAllDrives=true&key=${CONFIG.GOOGLE_API_KEY}${page ? '&pageToken=' + page : ''}`);
+    if (!r.ok) throw new Error('Drive ' + r.status);
+    const j = await r.json(); files.push(...(j.files || [])); page = j.nextPageToken || '';
+  } while (page);
+  return files;
+}
+async function driveDownload(id, onProgress) {
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media&supportsAllDrives=true&key=${CONFIG.GOOGLE_API_KEY}`);
+  if (!r.ok) throw new Error('Drive ' + r.status);
+  const total = +r.headers.get('content-length') || 0;
+  if (!r.body || !total) return r.blob();
+  const reader = r.body.getReader(), chunks = []; let got = 0;
+  for (;;) { const { done, value } = await reader.read(); if (done) break; chunks.push(value); got += value.length; if (onProgress) onProgress(got / total); }
+  return new Blob(chunks);
+}
+
 /* ---------- перенесення на інший компʼютер: один файл .party ---------- */
 const PACK_MAGIC = 'T2K1', PACK_NAME = 'ty-z-2000-x.party';
 async function buildPack() {
   const metas = [], parts = [];
   for (const s of S.songs) {
     const b = await Store.get('song:' + s.id); if (!b) continue;
-    metas.push({ file: s.file, title: s.title, dur: s.dur, start: s.start || 0, fromVideo: !!s.fromVideo, type: b.type || 'audio/mpeg', size: b.size });
+    metas.push({ file: s.file, title: s.title, dur: s.dur, start: s.start || 0, fromVideo: !!s.fromVideo, driveId: s.driveId || null, type: b.type || 'audio/mpeg', size: b.size });
     parts.push(b);
   }
   const head = new TextEncoder().encode(JSON.stringify({ app: 'ty-z-2000-x', v: 1, settings: S.settings, players: S.players.map(p => p.name), songs: metas }));
@@ -847,10 +884,10 @@ async function importPack(file) {
     const { head, songs } = await readPack(file);
     let added = 0, skipped = 0;
     for (const m of songs) {
-      if (S.songs.some(s => s.file === m.file && Math.abs(s.dur - m.dur) < 0.5)) { skipped++; continue; }
+      if (S.songs.some(s => (m.driveId && s.driveId === m.driveId) || (s.file === m.file && Math.abs(s.dur - m.dur) < 0.5))) { skipped++; continue; }
       const id = uid();
       await Store.put('song:' + id, new Blob([await m.blob.arrayBuffer()], { type: m.type }));
-      S.songs.push({ id, file: m.file, title: m.title, dur: m.dur, start: m.start || 0, fromVideo: !!m.fromVideo });
+      S.songs.push({ id, file: m.file, title: m.title, dur: m.dur, start: m.start || 0, fromVideo: !!m.fromVideo, ...(m.driveId ? { driveId: m.driveId } : {}) });
       added++; save();
       const el = $('#addStatus'); if (el) el.textContent = `📂 Додаю пісні з файлу: ${added + skipped} з ${songs.length}`;
     }
@@ -866,49 +903,74 @@ async function importPack(file) {
   if (S.screen === 'setup') render();
 }
 
-async function addFiles(files) {
-  if (busyAdding) return;
-  const packs = [...files].filter(f => /\.party$/i.test(f.name));
-  for (const p of packs) await importPack(p);
-  const list = [...files].filter(f => fileKind(f));
-  if (!list.length && packs.length) return;
-  if (!list.length) { setupMsg = { text: 'Це не схоже на аудіо чи відео 🤔 Потрібні mp3 / m4a / wav або mp4 / mov.', warn: true }; render(); return; }
+async function runQueue(items, doneText) {
   busyAdding = true;
-  const total = list.length, bad = [], prog = new Map(); let done = 0, added = 0;
+  const total = items.length, bad = [], prog = new Map(); let done = 0, added = 0;
   const status = () => {
-    const act = [...prog.entries()].map(([n, p]) => `«${n}» ${Math.round(p * 100)}%`).join(' · ');
-    const t = `${total > 1 ? `Готово ${done} з ${total}. ` : ''}${act ? '🎬 Витягую звук: ' + act : '💿 Додаю...'}`;
+    const act = [...prog.entries()].map(([n, p]) => `${p.icon} «${n}» ${Math.round(p.v * 100)}%`).join(' · ');
+    const t = `${total > 1 ? `Готово ${done} з ${total}. ` : ''}${act || '💿 Додаю...'}`;
     setupMsg = { text: t, live: true };
     const el = $('#addStatus'); if (el) el.textContent = t; else if (S.screen === 'setup') render();
   };
-  const one = async f => {
-    let blob = f, dur = 0, fromVideo = false;
+  const one = async it => {
+    let blob = null, dur = 0, fromVideo = false;
     try {
+      prog.set(it.name, { icon: it.driveId ? '⬇️' : '💿', v: 0 }); status();
+      const f = await it.load(v => { prog.set(it.name, { icon: '⬇️', v }); status(); });
       if (fileKind(f) === 'video') {
-        prog.set(f.name, 0); status();
-        const r = await videoToMp3(f, p => { prog.set(f.name, p); status(); });
+        prog.set(it.name, { icon: '🎬', v: 0 }); status();
+        const r = await videoToMp3(f, v => { prog.set(it.name, { icon: '🎬', v }); status(); });
         blob = r.blob; dur = r.dur; fromVideo = true;
-      } else dur = await probeDuration(f);
+      } else { blob = f; dur = await probeDuration(f); }
     } catch (e) { console.warn(e); dur = 0; }
-    prog.delete(f.name);
-    if (!dur) bad.push(f.name);
+    prog.delete(it.name);
+    if (!dur) bad.push(it.name);
     else {
       const id = uid();
       await Store.put('song:' + id, blob);
-      S.songs.push({ id, file: f.name, title: f.name.replace(/\.[^.]+$/, '').replace(/_+/g, ' ').trim(), dur, start: 0, fromVideo });
+      S.songs.push({ id, file: it.name, title: it.name.replace(/\.[^.]+$/, '').replace(/_+/g, ' ').trim(), dur, start: 0, fromVideo, ...(it.driveId ? { driveId: it.driveId } : {}) });
       added++; save();
       const ul = $('#songs'); if (S.screen === 'setup' && ul) ul.innerHTML = songRows();
     }
     done++; status();
   };
   status();
-  const queue = list.slice(), lanes = Math.max(1, Math.min(2, (navigator.hardwareConcurrency || 2) - 1));
+  const queue = items.slice(), lanes = Math.max(1, Math.min(2, (navigator.hardwareConcurrency || 2) - 1));
   await Promise.all(Array.from({ length: lanes }, async () => { while (queue.length) await one(queue.shift()); }));
   busyAdding = false;
   setupMsg = bad.length
-    ? { text: `Додано: ${added}. Не вдалося відкрити: ${bad.join(', ')}`, warn: true }
-    : { text: `✓ Додано пісень: ${added}` };
+    ? { text: `${doneText}: ${added}. Не вдалося відкрити: ${bad.join(', ')}`, warn: true }
+    : { text: `✓ ${doneText}: ${added}` };
   if (S.screen === 'setup') render();
+}
+async function addFiles(files) {
+  if (busyAdding) return;
+  const packs = [...files].filter(f => /\.party$/i.test(f.name));
+  for (const p of packs) await importPack(p);
+  const list = [...files].filter(f => fileKind(f));
+  if (!list.length) {
+    if (!packs.length) { setupMsg = { text: 'Це не схоже на аудіо чи відео 🤔 Потрібні mp3 / m4a / wav або mp4 / mov.', warn: true }; render(); }
+    return;
+  }
+  await runQueue(list.map(f => ({ name: f.name, load: async () => f })), 'Додано пісень');
+}
+async function syncDrive() {
+  if (busyAdding) return;
+  const fid = driveFolderId(S.settings.driveUrl);
+  const fail = text => { setupMsg = { text, warn: true }; render(); };
+  if (!fid) return fail('Встав посилання на папку Google Drive (вигляду drive.google.com/drive/folders/...)');
+  if (!CONFIG.GOOGLE_API_KEY) return fail('⚠ Доступ до Google Drive ще не налаштований (потрібен API-ключ).');
+  setupMsg = { text: '☁️ Дивлюсь, що є в папці...', live: true }; render();
+  let files;
+  try { files = await driveList(fid); } catch (e) { console.warn(e); return fail('Не вдалося відкрити папку 🤔 Перевір посилання і що доступ «Усі, хто має посилання».'); }
+  const media = files.filter(f => fileKind({ type: f.mimeType || '', name: f.name }));
+  const fresh = media.filter(f => !S.songs.some(s => s.driveId === f.id));
+  if (!media.length) return fail('У папці поки немає пісень (mp3, m4a, wav, mp4, mov) або вона не відкрита за посиланням.');
+  if (!fresh.length) { setupMsg = { text: `✓ Усі пісні з папки вже в грі (${media.length})` }; render(); return; }
+  await runQueue(fresh.map(f => ({
+    name: f.name, driveId: f.id,
+    load: onProg => driveDownload(f.id, onProg).then(b => new File([b], f.name, { type: f.mimeType || b.type })),
+  })), 'З Google Drive додано пісень');
 }
 
 /* ----- players ----- */
@@ -1232,6 +1294,7 @@ const ACTS = {
     render();
   },
   importPick() { const pi = $('#packIn'); if (pi) pi.click(); },
+  syncDrive() { syncDrive(); },
 
   delPlayer(b) { S.players = S.players.filter(p => p.id !== b.dataset.pid); save(); render(); },
   async startGame() {
