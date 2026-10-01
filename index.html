@@ -991,8 +991,16 @@ async function runQueue(items, doneText, lanesMax = 2, note = '') {
       const f = await it.load(v => { prog.set(it.name, { icon: '⬇️', v }); status(); }, n => { prog.set(it.name, { icon: `⏳ Google просить зачекати (спроба ${n + 1})`, v: 0 }); status(); });
       if (fileKind(f) === 'video') {
         prog.set(it.name, { icon: '🎬', v: 0 }); status();
-        const r = await videoToMp3(f, v => { prog.set(it.name, { icon: '🎬', v }); status(); });
-        blob = r.blob; dur = r.dur; fromVideo = true;
+        try {
+          const r = await videoToMp3(f, v => { prog.set(it.name, { icon: '🎬', v }); status(); });
+          blob = r.blob; dur = r.dur;
+        } catch (e) {
+          if (!e.noAudio) throw e;
+          const d = await probeDuration(f);   // браузер не розібрав контейнер (буває з .mov): граємо звук прямо з відеофайлу
+          if (!d) throw e;
+          blob = f; dur = d;
+        }
+        fromVideo = true;
       } else { blob = f; dur = await probeDuration(f); }
     } catch (e) { console.warn(it.name, e); dur = 0; it.why = e.drive ? 'drive' : e.silent ? 'silent' : e.noAudio ? 'noaudio' : 'other'; }
     prog.delete(it.name);
