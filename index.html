@@ -756,7 +756,7 @@ function render() {
   const sig = S.screen + (S.screen === 'round' && S.game ? ':' + S.game.idx : '');
   if (sig !== lastSig && app.firstElementChild) app.firstElementChild.classList.add('enter');
   lastSig = sig;
-  v.mount && v.mount();
+  return v.mount && v.mount();
 }
 
 /* ----- title ----- */
@@ -1081,7 +1081,7 @@ function bubblesHtml(r) {
 }
 function ampHtml(i) {
   const bday = S.settings.bday.trim();
-  const marquee = `*** SONG ${i + 1} *** ЗНАЄШ? НАЛІВО ✓ *** НЕ ЗНАЄШ? НАПРАВО ✗ ***${bday ? ` HAPPY B-DAY, ${esc(bday.toUpperCase())}! ***` : ''}`;
+  const marquee = `*** SONG ${i + 1} *** ЗНАЄШ ЦЮ ПІСНЮ? *** SHAZAM ЗАБОРОНЕНО 😏 ***${bday ? ` HAPPY B-DAY, ${esc(bday.toUpperCase())}! ***` : ''}`;
   return `
     <div class="amp">
       <div class="amp-t"><span>♫ MELODY PLAYER 2000</span><span class="grip"></span><span>_ □ ✕</span></div>
@@ -1294,8 +1294,13 @@ async function gotoRound(n, intro) {
     const fading = Audio2k.fadeStop(intro ? CONFIG.FADE_SEC * 1000 : 600);
     const ov = intro ? Overlay.song(n) : null;
     await fading;
-    S.game.idx = n; S.screen = 'round'; save(); render(); window.scrollTo(0, 0);
+    S.game.idx = n; S.screen = 'round'; save();
+    const mounted = render(); window.scrollTo(0, 0);
     if (ov) await ov;
+    if (intro) {   // наступна пісня стартує сама, щойно зникне заставка
+      await mounted;
+      if (S.screen === 'round' && S.game.idx === n && Audio2k.state() === 'ready') ACTS.playToggle();
+    }
   } finally { navBusy = false; }
 }
 async function finishGame() {
