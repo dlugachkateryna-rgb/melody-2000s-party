@@ -477,9 +477,14 @@ const Store = (() => {
   };
 })();
 
-/* ---------- audio engine: плавне затухання на початку і в кінці ---------- */
+/* ---------- audio engine: плавне затухання на початку і в кінці ----------
+   Пісня розкодовується в пам'ять і грає через Web Audio (AudioBufferSourceNode):
+   так звук надійно йде і в Safari, і автостарт не блокується.
+   Якщо браузер не може розкодувати файл, запасний шлях через <audio>. */
 const Audio2k = (() => {
-  let ctx = null, gain = null, analyser = null, el = null, url = null, timer = null, buf = null;
+  let ctx = null, gain = null, analyser = null, buf = null, timer = null, unlocked = false;
+  let mode = 'buffer', abuf = null, node = null, nodeT0 = 0, nodeOff = 0, pausedAt = 0;
+  let el = null, url = null;
   let clip = { start: 0, end: 0 }, st = 'idle', ramp = null, key = null, waiters = [];
   const subs = new Set();
   const fadeSec = () => CONFIG.FADE_SEC;
@@ -495,21 +500,51 @@ const Audio2k = (() => {
     gain = ctx.createGain(); gain.gain.value = 0;
     analyser = ctx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.72;
     buf = new Uint8Array(analyser.frequencyBinCount);
-    el = new Audio(); el.preload = 'auto';
-    ctx.createMediaElementSource(el).connect(gain);
     gain.connect(analyser); analyser.connect(ctx.destination);
-    el.addEventListener('ended', () => { if (st !== 'idle' && st !== 'ready') finish(); });
   }
-  function unlock() { try { ensure(); if (ctx.state === 'suspended') ctx.resume(); } catch (e) {} }
+  function ensureEl() {
+    if (el) return;
+    el = new Audio(); el.preload = 'auto'; el.playsInline = true;
+    ctx.createMediaElementSource(el).connect(gain);
+    el.addEventListener('ended', () => { if (mode === 'element' && st !== 'idle' && st !== 'ready') finish(); });
+  }
+  function unlock() {
+    try {
+      ensure();
+      if (ctx.state !== 'running') ctx.resume();
+      if (!unlocked) {   // Safari: «розбудити» звук коротким беззвучним буфером у момент кліку
+        const s = ctx.createBufferSource(); s.buffer = ctx.createBuffer(1, 1, 22050); s.connect(ctx.destination); s.start(0);
+        unlocked = true;
+      }
+    } catch (e) {}
+  }
+  function now() {
+    if (mode === 'element') return el ? el.currentTime : 0;
+    if (node) return nodeOff + (ctx.currentTime - nodeT0);
+    return pausedAt;
+  }
+  function stopNode() {
+    if (!node) return;
+    const n = node; node = null;
+    try { n.onended = null; n.stop(); } catch (e) {}
+    try { n.disconnect(); } catch (e) {}
+  }
+  function startNode(from) {
+    stopNode();
+    const n = ctx.createBufferSource(); n.buffer = abuf; n.connect(gain);
+    n.onended = () => { if (node === n && (st === 'playing' || st === 'pausing' || st === 'stopping')) finish(); };
+    node = n; nodeOff = from; nodeT0 = ctx.currentTime;
+    n.start(0, from, Math.max(0.05, clip.end - from));
+  }
   function mult() { if (!ramp) return 1; const k = Math.min(1, (performance.now() - ramp.t0) / ramp.ms); return ramp.from + (ramp.to - ramp.from) * k; }
   function setGain(v, instant) {
-    const now = ctx.currentTime;
-    if (instant) { gain.gain.cancelScheduledValues(now); gain.gain.setValueAtTime(v, now); }
-    else gain.gain.setTargetAtTime(v, now, 0.025);
+    const t = ctx.currentTime;
+    if (instant) { gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(v, t); }
+    else gain.gain.setTargetAtTime(v, t, 0.025);
   }
   function tick() {
     if (st !== 'playing' && st !== 'pausing' && st !== 'stopping') return;
-    const t = el.currentTime, f = fadeSec();
+    const t = now(), f = fadeSec();
     if (t >= clip.end - 0.03) { finish(); return; }
     // fade-in перші 2 сек, fade-out останні 2 сек фрагмента
     let g = Math.max(0, Math.min(1, (t - clip.start) / f, (clip.end - t) / f));
@@ -521,39 +556,56 @@ const Audio2k = (() => {
   }
   function startTimer() { if (!timer) timer = setInterval(tick, 25); }
   function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
-  function hardStop() { stopTimer(); ramp = null; if (el) el.pause(); if (gain) setGain(0, true); }
+  function hardStop() { stopTimer(); ramp = null; stopNode(); if (el) el.pause(); if (gain) setGain(0, true); }
+  function decode(arr) {   // промісна і стара (callback) форма, бо Safari буває різний
+    return new Promise((res, rej) => { const p = ctx.decodeAudioData(arr, res, rej); if (p && p.then) p.then(res, rej); });
+  }
   async function load(k, blob, startSec, clipSec) {
     ensure(); hardStop(); key = k; set('idle');
-    if (url) URL.revokeObjectURL(url);
-    url = URL.createObjectURL(blob);
-    await new Promise((res, rej) => {
-      const ok = () => { off(); res(); }, bad = () => { off(); rej(new Error('audio')); };
-      const off = () => { el.removeEventListener('loadedmetadata', ok); el.removeEventListener('error', bad); };
-      el.addEventListener('loadedmetadata', ok); el.addEventListener('error', bad);
-      el.src = url;
-    });
-    if (key !== k) return false;
-    const dur = isFinite(el.duration) ? el.duration : 0;
+    let dur = 0;
+    try {
+      const ab = await decode(await blob.arrayBuffer());
+      if (key !== k) return false;
+      abuf = ab; mode = 'buffer'; dur = ab.duration;
+    } catch (e) {
+      if (key !== k) return false;
+      ensureEl(); abuf = null; mode = 'element';
+      if (url) URL.revokeObjectURL(url);
+      url = URL.createObjectURL(blob);
+      await new Promise((res, rej) => {
+        const ok = () => { off(); res(); }, bad = () => { off(); rej(new Error('audio')); };
+        const off = () => { el.removeEventListener('loadedmetadata', ok); el.removeEventListener('error', bad); };
+        el.addEventListener('loadedmetadata', ok); el.addEventListener('error', bad);
+        el.src = url;
+      });
+      if (key !== k) return false;
+      dur = isFinite(el.duration) ? el.duration : 0;
+    }
     const start = Math.min(Math.max(0, +startSec || 0), Math.max(0, dur - 5));
     const end = clipSec > 0 ? Math.min(dur, start + clipSec) : dur;
-    clip = { start, end };
-    el.currentTime = start;
+    clip = { start, end }; pausedAt = start;
+    if (mode === 'element') el.currentTime = start;
     set('ready');
     return true;
   }
   function play() {
-    if (!el || (st !== 'ready' && st !== 'paused')) return;
+    if (st !== 'ready' && st !== 'paused') return;
     unlock();
-    if (st === 'ready') { el.currentTime = clip.start; ramp = null; }
-    else ramp = { from: 0, to: 1, t0: performance.now(), ms: 350 };
+    const from = st === 'ready' ? clip.start : now();
+    ramp = st === 'paused' ? { from: 0, to: 1, t0: performance.now(), ms: 350 } : null;
     setGain(0, true);
     set('playing'); startTimer();
+    if (mode === 'buffer') { startNode(from); return; }
+    el.currentTime = from;
     const p = el.play();
     if (p && p.catch) p.catch(err => { console.warn(err); stopTimer(); ramp = null; set('ready'); });
   }
   function pause() {
     if (st !== 'playing') return;
-    ramp = { from: mult(), to: 0, t0: performance.now(), ms: 350, done() { el.pause(); stopTimer(); set('paused'); } };
+    ramp = { from: mult(), to: 0, t0: performance.now(), ms: 350, done() {
+      if (mode === 'buffer') { pausedAt = now(); stopNode(); } else el.pause();
+      stopTimer(); set('paused');
+    } };
     set('pausing');
   }
   function stop(ms) {
@@ -568,16 +620,17 @@ const Audio2k = (() => {
   function finish() {
     stopTimer(); ramp = null;
     if (gain) setGain(0, true);
-    if (el) { el.pause(); try { el.currentTime = clip.start; } catch (e) {} }
+    stopNode(); pausedAt = clip.start;
+    if (el) { el.pause(); if (mode === 'element') { try { el.currentTime = clip.start; } catch (e) {} } }
     set('ready');
   }
   return {
     unlock, load, play, pause, stop, fadeStop,
-    state: () => st, key: () => key, on: f => subs.add(f),
+    state: () => st, key: () => key, on: f => subs.add(f), mode: () => mode, level: () => (gain ? gain.gain.value : 0),
     context() { try { ensure(); } catch (e) { return null; } return ctx; },
     progress() {
-      if (!el || st === 'idle') return { pos: 0, len: 0 };
-      return { pos: Math.max(0, Math.min(clip.end, el.currentTime) - clip.start), len: Math.max(0, clip.end - clip.start) };
+      if (st === 'idle') return { pos: 0, len: 0 };
+      return { pos: Math.max(0, Math.min(clip.end, now()) - clip.start), len: Math.max(0, clip.end - clip.start) };
     },
     freq() { if (!analyser) return null; analyser.getByteFrequencyData(buf); return buf; },
   };
