@@ -623,7 +623,12 @@ self.onmessage = e => {
 };`;
 async function decodeAudio(file) {
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-  const ab = await new OAC(2, 1, 44100).decodeAudioData(await file.arrayBuffer());
+  let ab;
+  try { ab = await new OAC(2, 1, 44100).decodeAudioData(await file.arrayBuffer()); }
+  catch (e) { const err = new Error('no audio'); err.noAudio = true; throw err; }
+  const ch0 = ab.getChannelData(0); let peak = 0;
+  for (let i = 0; i < ch0.length; i += 97) { const v = Math.abs(ch0[i]); if (v > peak) peak = v; }
+  if (peak < 0.002) { const err = new Error('silent'); err.silent = true; throw err; }
   return {
     L: new Float32Array(ab.getChannelData(0)),
     R: ab.numberOfChannels > 1 ? new Float32Array(ab.getChannelData(1)) : null,
@@ -904,9 +909,18 @@ async function driveList(folderId) {
   } while (page);
   return files;
 }
-async function driveDownload(id, onProgress) {
-  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media&supportsAllDrives=true&key=${CONFIG.GOOGLE_API_KEY}`);
-  if (!r.ok) throw new Error('Drive ' + r.status);
+async function driveDownload(id, onProgress, onWait) {
+  const url = `https://www.googleapis.com/drive/v3/files/${id}?alt=media&supportsAllDrives=true&key=${CONFIG.GOOGLE_API_KEY}`;
+  let r = null, pause = 3000;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const x = await fetch(url);
+      if (x.ok && !(x.headers.get('content-type') || '').startsWith('text/html')) r = x;
+    } catch (e) {}
+    if (r) break;
+    if (attempt < 5) { if (onWait) onWait(attempt); await sleep(pause); pause *= 2; continue; }   // Google тимчасово обмежив: чекаємо і пробуємо ще
+    const e = new Error('Drive download failed'); e.drive = true; throw e;
+  }
   const total = +r.headers.get('content-length') || 0;
   if (!r.body || !total) return r.blob();
   const reader = r.body.getReader(), chunks = []; let got = 0;
@@ -961,7 +975,7 @@ async function importPack(file) {
   if (S.screen === 'setup') render();
 }
 
-async function runQueue(items, doneText) {
+async function runQueue(items, doneText, lanesMax = 2, note = '') {
   busyAdding = true;
   const total = items.length, bad = [], prog = new Map(); let done = 0, added = 0;
   const status = () => {
@@ -974,15 +988,15 @@ async function runQueue(items, doneText) {
     let blob = null, dur = 0, fromVideo = false;
     try {
       prog.set(it.name, { icon: it.driveId ? '⬇️' : '💿', v: 0 }); status();
-      const f = await it.load(v => { prog.set(it.name, { icon: '⬇️', v }); status(); });
+      const f = await it.load(v => { prog.set(it.name, { icon: '⬇️', v }); status(); }, n => { prog.set(it.name, { icon: `⏳ Google просить зачекати (спроба ${n + 1})`, v: 0 }); status(); });
       if (fileKind(f) === 'video') {
         prog.set(it.name, { icon: '🎬', v: 0 }); status();
         const r = await videoToMp3(f, v => { prog.set(it.name, { icon: '🎬', v }); status(); });
         blob = r.blob; dur = r.dur; fromVideo = true;
       } else { blob = f; dur = await probeDuration(f); }
-    } catch (e) { console.warn(e); dur = 0; }
+    } catch (e) { console.warn(it.name, e); dur = 0; it.why = e.drive ? 'drive' : e.silent ? 'silent' : e.noAudio ? 'noaudio' : 'other'; }
     prog.delete(it.name);
-    if (!dur) bad.push(it.name);
+    if (!dur) bad.push(it);
     else {
       const id = uid();
       await Store.put('song:' + id, blob);
@@ -993,24 +1007,31 @@ async function runQueue(items, doneText) {
     done++; status();
   };
   status();
-  const queue = items.slice(), lanes = Math.max(1, Math.min(2, (navigator.hardwareConcurrency || 2) - 1));
-  await Promise.all(Array.from({ length: lanes }, async () => { while (queue.length) await one(queue.shift()); }));
+  const queue = items.slice(), lanes = Math.max(1, Math.min(lanesMax, (navigator.hardwareConcurrency || 2) - 1));
+  await Promise.all(Array.from({ length: lanes }, async () => { while (queue.length) { await one(queue.shift()); if (lanesMax === 1 && queue.length) await sleep(700); } }));
   busyAdding = false;
+  const why = { drive: 'Google тимчасово не віддав файл, натисни кнопку ще раз за кілька хвилин', noaudio: 'у файлі немає звуку або формат не підтримується', silent: 'звук порожній (тиша)', other: 'не вдалося відкрити' };
+  const groups = {}; bad.forEach(it => (groups[it.why || 'other'] = groups[it.why || 'other'] || []).push(it.name));
   setupMsg = bad.length
-    ? { text: `${doneText}: ${added}. Не вдалося відкрити: ${bad.join(', ')}`, warn: true }
-    : { text: `✓ ${doneText}: ${added}` };
+    ? { text: `${doneText}: ${added}${note}. Пропущено ${bad.length}: ` + Object.entries(groups).map(([k, names]) => `${why[k]} (${names.length}): ${names.join(', ')}`).join('. '), warn: true }
+    : { text: `✓ ${doneText}: ${added}${note}` };
   if (S.screen === 'setup') render();
 }
 async function addFiles(files) {
   if (busyAdding) return;
   const packs = [...files].filter(f => /\.party$/i.test(f.name));
   for (const p of packs) await importPack(p);
-  const list = [...files].filter(f => fileKind(f));
+  const stem = n => String(n).replace(/\.[^.]+$/, '').trim().toLowerCase();
+  const have = new Set(S.songs.map(s => stem(s.file)));
+  const media = [...files].filter(f => fileKind(f));
+  const list = media.filter(f => !have.has(stem(f.name)));   // такі самі пісні вже є в грі: пропускаємо
+  const dup = media.length - list.length;
   if (!list.length) {
-    if (!packs.length) { setupMsg = { text: 'Це не схоже на аудіо чи відео 🤔 Потрібні mp3 / m4a / wav або mp4 / mov.', warn: true }; render(); }
+    if (dup) { setupMsg = { text: `✓ Усі ці пісні вже є в грі (${dup})` }; render(); }
+    else if (!packs.length) { setupMsg = { text: 'Це не схоже на аудіо чи відео 🤔 Потрібні mp3 / m4a / wav або mp4 / mov.', warn: true }; render(); }
     return;
   }
-  await runQueue(list.map(f => ({ name: f.name, load: async () => f })), 'Додано пісень');
+  await runQueue(list.map(f => ({ name: f.name, load: async () => f })), 'Додано пісень', 2, dup ? ` (ще ${dup} вже були в грі)` : '');
 }
 async function syncDrive() {
   if (busyAdding) return;
@@ -1025,10 +1046,11 @@ async function syncDrive() {
   const fresh = media.filter(f => !S.songs.some(s => s.driveId === f.id));
   if (!media.length) return fail('У папці поки немає пісень (mp3, m4a, wav, mp4, mov) або вона не відкрита за посиланням.');
   if (!fresh.length) { setupMsg = { text: `✓ Усі пісні з папки вже в грі (${media.length})` }; render(); return; }
+  setupMsg = { text: `☁️ У папці ${media.length}, у грі вже ${media.length - fresh.length}. Докачую ${fresh.length}...`, live: true }; render();
   await runQueue(fresh.map(f => ({
     name: f.name, driveId: f.id,
-    load: onProg => driveDownload(f.id, onProg).then(b => new File([b], f.name, { type: f.mimeType || b.type })),
-  })), 'З Google Drive додано пісень');
+    load: (onProg, onWait) => driveDownload(f.id, onProg, onWait).then(b => new File([b], f.name, { type: f.mimeType || b.type })),
+  })), 'З Google Drive додано пісень', 1);
 }
 
 /* ----- players ----- */
